@@ -1,0 +1,2 @@
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IP.c:67:6:vProcessGeneratedUDPPacket	24	static
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IP.c:110:12:xProcessReceivedUDPPacket	40	static,ignoring_inline_asm

@@ -1,0 +1,10 @@
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IPv6.c:92:23:xCheckIPv6SizeFields	15
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IPv6.c:232:23:xIsExtHeader	8
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IPv6.c:261:13:xGetIPv6MulticastGroupID	3
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IPv6.c:282:12:xIsIPv6Loopback	2
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IPv6.c:308:16:xBadIPv6Loopback	5
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IPv6.c:341:12:xIsIPv6AllowedMulticast	5
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IPv6.c:391:12:xCompareIPv6_Address	15
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IPv6.c:476:26:prvAllowIPPacketIPv6	13
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IPv6.c:584:12:xGetExtensionOrder	13
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IPv6.c:648:26:eHandleIPv6ExtensionHeaders	4

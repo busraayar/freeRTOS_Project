@@ -1,0 +1,10 @@
+../ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_1.c:156:24:bIsValidNetworkDescriptor	1
+../ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_1.c:163:17:prvShowWarnings	1
+../ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_1.c:170:12:xNetworkBuffersInitialise	7
+../ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_1.c:238:29:pxGetNetworkBufferWithDescriptor	8
+../ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_1.c:326:29:pxNetworkBufferGetFromISR	3
+../ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_1.c:364:12:vNetworkBufferReleaseFromISR	1
+../ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_1.c:383:6:vReleaseNetworkBufferAndDescriptor	5
+../ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_1.c:424:13:uxGetMinimumFreeNetworkBuffers	1
+../ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_1.c:430:13:uxGetNumberOfFreeNetworkBuffers	1
+../ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_1.c:435:29:pxResizeNetworkBufferWithDescriptor	2
