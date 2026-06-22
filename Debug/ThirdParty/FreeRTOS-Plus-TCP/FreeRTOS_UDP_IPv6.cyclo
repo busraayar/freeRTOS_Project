@@ -1,4 +1,0 @@
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IPv6.c:87:28:pxGetEndpoint	6
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IPv6.c:124:34:prvStartLookup	4
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IPv6.c:160:6:vProcessGeneratedUDPPacket_IPv6	9
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IPv6.c:380:12:xProcessReceivedUDPPacket_IPv6	8

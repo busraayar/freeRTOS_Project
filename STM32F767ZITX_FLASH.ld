@@ -44,8 +44,10 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 /* Memories definition */
 MEMORY
 {
-  RAM    (xrw)    : ORIGIN = 0x20000000,   LENGTH = 512K
-  FLASH    (rx)    : ORIGIN = 0x8000000,   LENGTH = 2048K
+  FLASH    (rx)   : ORIGIN = 0x8000000,   LENGTH = 2048K
+  DTCM     (rw)  : ORIGIN = 0x20000000,   LENGTH = 128K
+  SRAM1    (xrw)  : ORIGIN = 0x20020000,   LENGTH = 368K
+  SRAM2    (rw)   : ORIGIN = 0x2007C000,   LENGTH = 16K
 }
 
 /* Sections */
@@ -146,7 +148,7 @@ SECTIONS
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
 
-  } >RAM AT> FLASH
+  } >SRAM1 AT> FLASH
 
   /* Uninitialized data section into "RAM" Ram type memory */
   . = ALIGN(4);
@@ -162,7 +164,7 @@ SECTIONS
     . = ALIGN(4);
     _ebss = .;         /* define a global symbol at bss end */
     __bss_end__ = _ebss;
-  } >RAM
+  } >SRAM1
 
   /* User_heap_stack section, used to check that there is enough "RAM" Ram  type memory left */
   ._user_heap_stack :
@@ -173,7 +175,7 @@ SECTIONS
     . = . + _Min_Heap_Size;
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
-  } >RAM
+  } >SRAM1
 
   /* Remove information from the compiler libraries */
   /DISCARD/ :
@@ -183,5 +185,29 @@ SECTIONS
     libgcc.a ( * )
   }
 
+/* It modificaited because DMA access memory  */
+  .ethDmaSection(NOLOAD):
+  {
+  	. = ALIGN(32);
+  	
+	. = ABSOLUTE (0x2007C000);
+  	*(RxDecripSection) 
+
+  	. = ABSOLUTE (0x2007C0A0);
+  	*(TxDecripSection)  	
+  	
+	. = ABSOLUTE (0x2007C140);
+  	*(RxBuffer) 
+
+	. = ABSOLUTE (0x2007D900);
+  	*(TxBuffer) 
+  } > SRAM2
+
+  .dtcmSection :
+  {
+  	. = ALIGN(4);
+  	*(.dtcm_data)
+  } > DTCM
+  
   .ARM.attributes 0 : { *(.ARM.attributes) }
 }

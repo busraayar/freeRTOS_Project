@@ -6,7 +6,7 @@
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP_Utils.c:367:18:void_ptr_to_uintptr	24	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP_Utils.c:384:19:prvChecksumProtocolChecks	32	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP_Utils.c:494:19:prvChecksumProtocolMTUCheck	24	static
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP_Utils.c:532:13:prvChecksumProtocolCalculate	40	static
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP_Utils.c:532:13:prvChecksumProtocolCalculate	32	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP_Utils.c:657:13:prvChecksumProtocolSetChecksum	24	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP_Utils.c:702:33:pxPacketBuffer_to_NetworkBuffer	16	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP_Utils.c:717:29:pxUDPPayloadBuffer_to_NetworkBuffer	40	static,ignoring_inline_asm

@@ -1,11 +1,11 @@
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:235:13:prvIPTask	16	static
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:255:13:prvProcessIPEventsAndTimers	56	static
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:255:13:prvProcessIPEventsAndTimers	48	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:494:13:prvIPTask_Initialise	16	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:555:13:prvIPTask_CheckPendingEvents	16	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:587:13:prvCallDHCP_RA_Handler	24	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:638:14:FreeRTOS_GetIPTaskHandle	4	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:649:6:vIPNetworkUpCalls	16	static
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:695:13:prvHandleEthernetPacket	24	static
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:695:13:prvHandleEthernetPacket	16	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:741:13:prvForwardTxPacket	16	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:760:6:FreeRTOS_NetworkDown	32	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:796:12:FreeRTOS_NetworkDownFromISR	32	static

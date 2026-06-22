@@ -8,7 +8,7 @@
 ../ThirdParty/FreeRTOS-Plus-TCP/portable/NetworkInterface/STM32/NetworkInterface.c:573:19:prvNetworkInterfaceOutput	128	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS-Plus-TCP/portable/NetworkInterface/STM32/NetworkInterface.c:711:13:prvAddAllowedMACAddress	32	static
 ../ThirdParty/FreeRTOS-Plus-TCP/portable/NetworkInterface/STM32/NetworkInterface.c:734:13:prvRemoveAllowedMACAddress	24	static
-../ThirdParty/FreeRTOS-Plus-TCP/portable/NetworkInterface/STM32/NetworkInterface.c:753:19:prvNetworkInterfaceInput	48	static,ignoring_inline_asm
+../ThirdParty/FreeRTOS-Plus-TCP/portable/NetworkInterface/STM32/NetworkInterface.c:753:19:prvNetworkInterfaceInput	40	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS-Plus-TCP/portable/NetworkInterface/STM32/NetworkInterface.c:811:8:prvEMACHandlerTask	48	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS-Plus-TCP/portable/NetworkInterface/STM32/NetworkInterface.c:896:19:prvEMACTaskStart	40	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS-Plus-TCP/portable/NetworkInterface/STM32/NetworkInterface.c:975:19:prvEthConfigInit	192	static,ignoring_inline_asm

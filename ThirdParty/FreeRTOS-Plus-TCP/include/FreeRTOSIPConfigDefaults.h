@@ -1022,7 +1022,7 @@ STATIC_ASSERT( pdMS_TO_TICKS( ipconfigPHY_LS_LOW_CHECK_TIME_MS ) <= portMAX_DELA
  */
 
 #ifndef ipconfigHAS_TX_CRC_OFFLOADING
-    #define ipconfigHAS_TX_CRC_OFFLOADING    ipconfigDISABLE
+    #define ipconfigHAS_TX_CRC_OFFLOADING    ipconfigENABLE
 #endif
 
 /*---------------------------------------------------------------------------*/

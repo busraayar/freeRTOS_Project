@@ -1,4 +1,0 @@
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IPv6.c:87:28:pxGetEndpoint	32	static
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IPv6.c:124:34:prvStartLookup	24	static
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IPv6.c:160:6:vProcessGeneratedUDPPacket_IPv6	80	static
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IPv6.c:380:12:xProcessReceivedUDPPacket_IPv6	48	static,ignoring_inline_asm

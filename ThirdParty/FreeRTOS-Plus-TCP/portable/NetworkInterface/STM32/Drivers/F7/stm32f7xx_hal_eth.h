@@ -21,7 +21,7 @@
     #define STM32F7xx_HAL_ETH_H
 
     #ifdef __cplusplus
-    extern "C" {
+    extern "C"
     #endif
 
 /* Includes ------------------------------------------------------------------*/

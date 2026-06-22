@@ -1,3 +1,0 @@
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_TCP_Transmission_IPv6.c:84:6:prvTCPReturnPacket_IPV6	200	static,ignoring_inline_asm
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_TCP_Transmission_IPv6.c:317:12:prvTCPPrepareConnect_IPV6	88	static
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_TCP_Transmission_IPv6.c:495:12:prvTCPSendSpecialPktHelper_IPV6	32	static

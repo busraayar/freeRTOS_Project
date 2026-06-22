@@ -1,1 +1,3 @@
-../Core/Src/rtos.c:20:6:ethernetInit	4	static
+../Core/Src/rtos.c:23:6:rtos_start	8	static
+../Core/Src/rtos.c:30:6:configureInetrrupt	40	static
+../Core/Src/rtos.c:56:6:ethernetInit	8	static

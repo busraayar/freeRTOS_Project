@@ -5,13 +5,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_1.c 
+../ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_2.c 
 
 OBJS += \
-./ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_1.o 
+./ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_2.o 
 
 C_DEPS += \
-./ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_1.d 
+./ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_2.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -21,7 +21,7 @@ ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/%.o ThirdParty/FreeRTOS-P
 clean: clean-ThirdParty-2f-FreeRTOS-2d-Plus-2d-TCP-2f-portable-2f-BufferManagement
 
 clean-ThirdParty-2f-FreeRTOS-2d-Plus-2d-TCP-2f-portable-2f-BufferManagement:
-	-$(RM) ./ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_1.cyclo ./ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_1.d ./ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_1.o ./ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_1.su
+	-$(RM) ./ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_2.cyclo ./ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_2.d ./ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_2.o ./ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_2.su
 
 .PHONY: clean-ThirdParty-2f-FreeRTOS-2d-Plus-2d-TCP-2f-portable-2f-BufferManagement
 

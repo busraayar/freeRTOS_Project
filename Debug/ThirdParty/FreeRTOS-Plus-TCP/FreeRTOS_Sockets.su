@@ -1,7 +1,7 @@
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:402:19:prvValidSocket	32	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:434:6:vNetworkSocketsInit	8	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:458:19:prvDetermineSocketSize	56	static,ignoring_inline_asm
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:560:17:prvInitialiseTCPFields	24	static
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:560:17:prvInitialiseTCPFields	16	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:613:10:FreeRTOS_socket	48	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:1090:36:prvRecvFromWaitForPacket	64	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:1206:16:prvRecvFrom_CopyPacket	32	static
