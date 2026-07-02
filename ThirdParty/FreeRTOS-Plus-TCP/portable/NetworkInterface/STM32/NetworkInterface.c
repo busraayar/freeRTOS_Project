@@ -1973,7 +1973,7 @@ void HAL_ETH_TxFreeCallback( uint32_t * pulBuff )
 
 size_t uxNetworkInterfaceAllocateRAMToBuffers( NetworkBufferDescriptor_t pxNetworkBuffers[ ipconfigNUM_NETWORK_BUFFER_DESCRIPTORS ] )
 {
-    static uint8_t ucNetworkPackets[ ipconfigNUM_NETWORK_BUFFER_DESCRIPTORS ][ niEMAC_TOTAL_BUFFER_SIZE ] __ALIGNED( niEMAC_BUF_ALIGNMENT ) __attribute__( ( section( niEMAC_BUFFERS_SECTION ) ) );
+    static uint8_t  ucNetworkPackets[ ipconfigNUM_NETWORK_BUFFER_DESCRIPTORS ][ niEMAC_TOTAL_BUFFER_SIZE ] __ALIGNED( niEMAC_BUF_ALIGNMENT ) __attribute__( ( section( niEMAC_BUFFERS_SECTION ) ) );
 
     configASSERT( niEMAC_TOTAL_BUFFER_SIZE >= ipconfigETHERNET_MINIMUM_PACKET_BYTES );
     configASSERT( xBufferAllocFixedSize == pdTRUE );

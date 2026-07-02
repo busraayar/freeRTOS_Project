@@ -29,7 +29,13 @@
 
 #define ipconfigSOCK_DEFAULT_RECEIVE_BLOCK_TIME					( 5000 / portTICK_PERIOD_MS )
 #define ipconfigSOCK_DEFAULT_SEND_BLOCK_TIME					( 5000 / portTICK_PERIOD_MS )
-#define ipconfigREPLY_TO_INCOMING_PINGS							1
+#define ipconfigSUPPORT_OUTGOING_PINGS							1
+#define ipconfigDRIVER_INCLUDED_RX_IP_CHECKSUM					1
+#define ipconfigDRIVER_INCLUDED_TX_IP_CHECKSUM					1
+#define ipconfigUSE_LINKED_RX_MESSAGES							0
+#define CHECKSUM_BY_HARDWARE 									1
+
+#define ipconfigBUFFER_ALLOC_SECTION    __attribute__((section(".eth_sec")))
 
 /*TCP Specific Constants*/
 //#define ipconfigIGNORE_UNKNOWN_PACKETS

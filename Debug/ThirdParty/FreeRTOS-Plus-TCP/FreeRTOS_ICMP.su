@@ -1,2 +1,3 @@
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_ICMP.c:82:30:ProcessICMPPacket	32	static,ignoring_inline_asm
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_ICMP.c:139:37:prvProcessICMPEchoRequest	40	static
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_ICMP.c:139:37:prvProcessICMPEchoRequest	32	static
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_ICMP.c:206:17:prvProcessICMPEchoReply	40	static

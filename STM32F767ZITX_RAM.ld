@@ -36,7 +36,7 @@
 ENTRY(Reset_Handler)
 
 /* Highest address of the user mode stack */
-_estack = ORIGIN(RAM) + LENGTH(RAM); /* end of "RAM" Ram type memory */
+_estack = ORIGIN(DTCM) + LENGTH(DTCM) + LENGTH(SRAM1) + LENGTH(SRAM2); /* end of "RAM" Ram type memory */
 
 _Min_Heap_Size = 0x200; /* required amount of heap */
 _Min_Stack_Size = 0x400; /* required amount of stack */
@@ -103,7 +103,7 @@ SECTIONS
     *(.ARM.exidx*)
     __exidx_end = .;
     . = ALIGN(4);
-  } >RAM
+  } >SRAM1
 
   .preinit_array (READONLY) : /* The "READONLY" keyword is only supported in GCC11 and later, remove it if using GCC10 or earlier. */
   {
@@ -112,7 +112,7 @@ SECTIONS
     KEEP (*(.preinit_array*))
     PROVIDE_HIDDEN (__preinit_array_end = .);
     . = ALIGN(4);
-  } >RAM
+  } >SRAM1
 
   .init_array (READONLY) : /* The "READONLY" keyword is only supported in GCC11 and later, remove it if using GCC10 or earlier. */
   {
@@ -122,7 +122,7 @@ SECTIONS
     KEEP (*(.init_array*))
     PROVIDE_HIDDEN (__init_array_end = .);
     . = ALIGN(4);
-  } >RAM
+  } >SRAM1
 
   .fini_array (READONLY) : /* The "READONLY" keyword is only supported in GCC11 and later, remove it if using GCC10 or earlier. */
   {
@@ -132,7 +132,7 @@ SECTIONS
     KEEP (*(.fini_array*))
     PROVIDE_HIDDEN (__fini_array_end = .);
     . = ALIGN(4);
-  } >RAM
+  } >SRAM1
 
   /* Used by the startup to initialize data */
   _sidata = LOADADDR(.data);
@@ -148,7 +148,7 @@ SECTIONS
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
 
-  } >RAM
+  } >SRAM1
 
   /* Uninitialized data section into "RAM" Ram type memory */
   . = ALIGN(4);
@@ -184,6 +184,43 @@ SECTIONS
     libm.a ( * )
     libgcc.a ( * )
   }
+/* It modificaited because DMA access memory  */
+	.RxDescripSection (NOLOAD) :
+	{
+	    . = ALIGN(32);
+	    KEEP(*(.RxDescripSection))
+	} > SRAM2
+	
+	.TxDescripSection (NOLOAD) :
+	{
+	    . = ALIGN(32);
+	    KEEP(*(.TxDescripSection))
+	} > SRAM2
+	
+	.RxBuffer (NOLOAD) :
+	{
+	    . = ALIGN(32);
+	    KEEP(*(.RxBuffer))
+	} > SRAM2
+	
+	.TxBuffer (NOLOAD) :
+	{
+	    . = ALIGN(32);
+	    KEEP(*(.TxBuffer))
+	} > SRAM2
 
+	.eth_sec (NOLOAD) :
+	{
+	    . = ALIGN(32);
+	    KEEP(*(.eth_sec))
+	    . = ALIGN(32);
+	} > SRAM2
+	
+  .dtcmSection :
+  {
+  	. = ALIGN(4);
+  	*(.dtcm_data)
+  } > DTCM
+  
   .ARM.attributes 0 : { *(.ARM.attributes) }
 }

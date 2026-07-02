@@ -28,7 +28,7 @@
 ../ThirdParty/FreeRTOS/tasks.c:4385:17:uxTaskGetSystemState	32	static
 ../ThirdParty/FreeRTOS/tasks.c:4546:12:xTaskCatchUpTicks	24	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS/tasks.c:4670:12:xTaskIncrementTick	48	static,ignoring_inline_asm
-../ThirdParty/FreeRTOS/tasks.c:5056:10:vTaskSwitchContext	32	static,ignoring_inline_asm
+../ThirdParty/FreeRTOS/tasks.c:5056:10:vTaskSwitchContext	40	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS/tasks.c:5243:6:vTaskPlaceOnEventList	24	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS/tasks.c:5272:6:vTaskPlaceOnUnorderedEventList	40	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS/tasks.c:5304:10:vTaskPlaceOnEventListRestricted	32	static,ignoring_inline_asm

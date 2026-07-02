@@ -15,6 +15,7 @@
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:1117:10:FreeRTOS_GetEndPointConfiguration	24	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:1196:10:FreeRTOS_SetEndPointConfiguration	24	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:1275:16:FreeRTOS_ReleaseTCPPayloadBuffer	56	static,ignoring_inline_asm
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:1324:16:FreeRTOS_SendPingRequest	64	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:1415:12:xSendEventToIPTask	32	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:1435:12:xSendEventStructToIPTask	32	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_IP.c:1507:26:eConsiderFrameForProcessing	32	static

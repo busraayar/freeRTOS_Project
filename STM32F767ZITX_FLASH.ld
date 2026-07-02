@@ -36,7 +36,7 @@
 ENTRY(Reset_Handler)
 
 /* Highest address of the user mode stack */
-_estack = ORIGIN(RAM) + LENGTH(RAM); /* end of "RAM" Ram type memory */
+_estack = ORIGIN(DTCM) + LENGTH(DTCM) + LENGTH(SRAM1) + LENGTH(SRAM2); /* end of "RAM" Ram type memory */
 
 _Min_Heap_Size = 0x200; /* required amount of heap */
 _Min_Stack_Size = 0x400; /* required amount of stack */
@@ -47,7 +47,7 @@ MEMORY
   FLASH    (rx)   : ORIGIN = 0x8000000,   LENGTH = 2048K
   DTCM     (rw)  : ORIGIN = 0x20000000,   LENGTH = 128K
   SRAM1    (xrw)  : ORIGIN = 0x20020000,   LENGTH = 368K
-  SRAM2    (rw)   : ORIGIN = 0x2007C000,   LENGTH = 16K
+  SRAM2    (rw)   : ORIGIN = 0x2007C000,   LENGTH = 16K 
 }
 
 /* Sections */
@@ -186,23 +186,35 @@ SECTIONS
   }
 
 /* It modificaited because DMA access memory  */
-  .ethDmaSection(NOLOAD):
-  {
-  	. = ALIGN(32);
-  	
-	. = ABSOLUTE (0x2007C000);
-  	*(RxDecripSection) 
-
-  	. = ABSOLUTE (0x2007C0A0);
-  	*(TxDecripSection)  	
-  	
-	. = ABSOLUTE (0x2007C140);
-  	*(RxBuffer) 
-
-	. = ABSOLUTE (0x2007D900);
-  	*(TxBuffer) 
-  } > SRAM2
-
+	.RxDescripSection (NOLOAD) :
+	{
+	    . = ALIGN(32);
+	    KEEP(*(.RxDescripSection))
+	} > SRAM2
+	
+	.TxDescripSection (NOLOAD) :
+	{
+	    . = ALIGN(32);
+	    KEEP(*(.TxDescripSection))
+	} > SRAM2
+	
+	.RxBuffer (NOLOAD) :
+	{
+	    . = ALIGN(32);
+	    KEEP(*(.RxBuffer))
+	} > SRAM2
+	
+	.TxBuffer (NOLOAD) :
+	{
+	    . = ALIGN(32);
+	    KEEP(*(.TxBuffer))
+	} > SRAM2
+	.sram2_non_cached (NOLOAD) :
+	{
+	    . = ALIGN(32);
+	    *(.NetworkPacketsSection)
+	    . = ALIGN(32);
+	} > SRAM2	
   .dtcmSection :
   {
   	. = ALIGN(4);

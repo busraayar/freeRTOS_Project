@@ -20,11 +20,27 @@
 #include "main.h"
 #include "can.h"
 #include "eth.h"
+#include "rng.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <FreeRTOSIPConfig.h>
+#include <FreeRTOS_Routing.h>
 
+// Ağ Parametreleri (Bilgisayarınla aynı blokta olduğundan emin ol, örn: 192.168.1.X)
+const uint8_t ucIPAddress[ 4 ]       = { 192, 168, 2, 125 };
+const uint8_t ucNetMask[ 4 ]         = { 255, 255, 255, 0 };
+const uint8_t ucGatewayAddress[ 4 ]   = { 192, 168, 2, 1 };
+const uint8_t ucDNSServerAddress[ 4 ] = { 8, 8, 8, 8 };
+const uint8_t ucMACAddress[ 6 ]       = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55 };
+
+// Tek arayüz ve tek endpoint yeterli
+static NetworkInterface_t xInterfaces[1];
+static NetworkEndPoint_t xEndPoints[1];
+
+// ST'nin Ethernet sürücü fonksiyonu
+extern NetworkInterface_t * pxSTM32_FillInterfaceDescriptor( BaseType_t xEMACIndex, NetworkInterface_t * pxInterface );
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -52,7 +68,20 @@
 void SystemClock_Config(void);
 static void MPU_Config(void);
 /* USER CODE BEGIN PFP */
+void vStartNetwork( void )
+{
+    pxSTM32_FillInterfaceDescriptor( 0, &( xInterfaces[0] ) );
 
+    FreeRTOS_FillEndPoint( &( xInterfaces[0] ),
+                           &( xEndPoints[0] ),
+                           ucIPAddress,
+                           ucNetMask,
+                           ucGatewayAddress,
+                           ucDNSServerAddress,
+                           ucMACAddress );
+
+    FreeRTOS_IPInit_Multi();
+}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -99,10 +128,15 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_ETH_Init();
   MX_CAN1_Init();
+  MX_RNG_Init();
+  MX_ETH_Init();
   /* USER CODE BEGIN 2 */
 
+  SCB_DisableICache();
+  SCB_DisableDCache();
+  vStartNetwork();
+  vTaskStartScheduler();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -140,7 +174,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLM = 8;
   RCC_OscInitStruct.PLL.PLLN = 216;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 2;
+  RCC_OscInitStruct.PLL.PLLQ = 9;
   RCC_OscInitStruct.PLL.PLLR = 2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -187,14 +221,14 @@ void MPU_Config(void)
   MPU_InitStruct.Enable = MPU_REGION_ENABLE;
   MPU_InitStruct.Number = MPU_REGION_NUMBER0;
   MPU_InitStruct.BaseAddress = 0x2007C000;
-  MPU_InitStruct.Size = MPU_REGION_SIZE_16KB;
+  MPU_InitStruct.Size = MPU_REGION_SIZE_1KB;
   MPU_InitStruct.SubRegionDisable = 0x0;
   MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL1;
   MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
   MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;
   MPU_InitStruct.IsShareable = MPU_ACCESS_SHAREABLE;
   MPU_InitStruct.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
-  MPU_InitStruct.IsBufferable = MPU_ACCESS_BUFFERABLE;
+  MPU_InitStruct.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
 
   HAL_MPU_ConfigRegion(&MPU_InitStruct);
   /* Enables the MPU */
@@ -215,7 +249,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM6) {
+  if (htim->Instance == TIM6)
+  {
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
@@ -237,8 +272,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

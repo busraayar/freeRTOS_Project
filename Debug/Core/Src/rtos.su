@@ -1,3 +1,9 @@
-../Core/Src/rtos.c:23:6:rtos_start	8	static
-../Core/Src/rtos.c:30:6:configureInetrrupt	40	static
-../Core/Src/rtos.c:56:6:ethernetInit	8	static
+../Core/Src/rtos.c:100:17:ulApplicationGetNextSequenceNumber	24	static
+../Core/Src/rtos.c:122:12:xApplicationGetRandomNumber	16	static
+../Core/Src/rtos.c:128:23:xApplicationDHCPHook_Multi	24	static
+../Core/Src/rtos.c:139:6:vApplicationPingReplyHook	16	static
+../Core/Src/rtos.c:160:12:vSendPing	24	static
+../Core/Src/rtos.c:202:6:vApplicationStackOverflowHook	24	static,ignoring_inline_asm
+../Core/Src/rtos.c:218:6:rtos_start	4	static
+../Core/Src/rtos.c:223:6:configureInetrrupt	40	static
+../Core/Src/rtos.c:249:6:ethernetInit	8	static

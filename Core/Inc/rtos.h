@@ -11,6 +11,10 @@
 #include <string.h>
 #include <stdint.h>
 
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+
 #define BufferLen				1536u
 
 
