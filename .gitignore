@@ -1,0 +1,15 @@
+# STM32CubeIDE / GCC Derleme Çıktıları (Object, Dependency dosyaları vb.)
+Debug/
+Release/
+*.o
+*.d
+*.su
+*.elf
+*.bin
+*.hex
+*.map
+*.list
+
+# IDE'nin ürettiği geçici yerel ayar dosyaları
+.settings/
+.launch

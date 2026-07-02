@@ -19,6 +19,10 @@ RM := rm -rf
 -include ThirdParty/FreeRTOS/subdir.mk
 -include Drivers/STM32F7xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk
+-include Core/Src/tasks/MqttTask/subdir.mk
+-include Core/Src/tasks/EthTask/subdir.mk
+-include Core/Src/tasks/CanTask/subdir.mk
+-include Core/Src/tasks/AppTask/subdir.mk
 -include Core/Src/subdir.mk
 -include objects.mk
 

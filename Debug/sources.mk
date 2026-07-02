@@ -23,6 +23,10 @@ C_DEPS :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 Core/Src \
+Core/Src/tasks/AppTask \
+Core/Src/tasks/CanTask \
+Core/Src/tasks/EthTask \
+Core/Src/tasks/MqttTask \
 Core/Startup \
 Drivers/STM32F7xx_HAL_Driver/Src \
 ThirdParty/FreeRTOS \
