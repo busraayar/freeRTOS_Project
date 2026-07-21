@@ -9,6 +9,7 @@
 "./Core/Src/stm32f7xx_it.o"
 "./Core/Src/syscalls.o"
 "./Core/Src/system_stm32f7xx.o"
+"./Core/Src/tim.o"
 "./Core/Src/tasks/AppTask/appTask.o"
 "./Core/Src/tasks/CanTask/canTask.o"
 "./Core/Src/tasks/EthTask/ethTask.o"

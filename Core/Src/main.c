@@ -21,26 +21,15 @@
 #include "can.h"
 #include "eth.h"
 #include "rng.h"
+#include "tim.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <FreeRTOSIPConfig.h>
-#include <FreeRTOS_Routing.h>
-
-// Ağ Parametreleri (Bilgisayarınla aynı blokta olduğundan emin ol, örn: 192.168.1.X)
-const uint8_t ucIPAddress[ 4 ]       = { 192, 168, 2, 125 };
-const uint8_t ucNetMask[ 4 ]         = { 255, 255, 255, 0 };
-const uint8_t ucGatewayAddress[ 4 ]   = { 192, 168, 2, 1 };
-const uint8_t ucDNSServerAddress[ 4 ] = { 8, 8, 8, 8 };
-const uint8_t ucMACAddress[ 6 ]       = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55 };
-
-// Tek arayüz ve tek endpoint yeterli
-static NetworkInterface_t xInterfaces[1];
-static NetworkEndPoint_t xEndPoints[1];
-
-// ST'nin Ethernet sürücü fonksiyonu
-extern NetworkInterface_t * pxSTM32_FillInterfaceDescriptor( BaseType_t xEMACIndex, NetworkInterface_t * pxInterface );
+#include <../Src/tasks/AppTask/appTask.h>
+#include <../Src/tasks/CanTask/canTask.h>
+#include <../Src/tasks/EthTask/ethTask.h>
+#include <../Src/tasks/MqttTask/mqttTask.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -68,20 +57,7 @@ extern NetworkInterface_t * pxSTM32_FillInterfaceDescriptor( BaseType_t xEMACInd
 void SystemClock_Config(void);
 static void MPU_Config(void);
 /* USER CODE BEGIN PFP */
-void vStartNetwork( void )
-{
-    pxSTM32_FillInterfaceDescriptor( 0, &( xInterfaces[0] ) );
 
-    FreeRTOS_FillEndPoint( &( xInterfaces[0] ),
-                           &( xEndPoints[0] ),
-                           ucIPAddress,
-                           ucNetMask,
-                           ucGatewayAddress,
-                           ucDNSServerAddress,
-                           ucMACAddress );
-
-    FreeRTOS_IPInit_Multi();
-}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -131,11 +107,16 @@ int main(void)
   MX_CAN1_Init();
   MX_RNG_Init();
   MX_ETH_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
 
   SCB_DisableICache();
   SCB_DisableDCache();
+
+//  CanTaskCreate();
+//  AppTaskCreate();
   vStartNetwork();
+  MqttTaskCreate();
   vTaskStartScheduler();
   /* USER CODE END 2 */
 
@@ -221,7 +202,7 @@ void MPU_Config(void)
   MPU_InitStruct.Enable = MPU_REGION_ENABLE;
   MPU_InitStruct.Number = MPU_REGION_NUMBER0;
   MPU_InitStruct.BaseAddress = 0x2007C000;
-  MPU_InitStruct.Size = MPU_REGION_SIZE_1KB;
+  MPU_InitStruct.Size = MPU_REGION_SIZE_32KB;
   MPU_InitStruct.SubRegionDisable = 0x0;
   MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL1;
   MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;

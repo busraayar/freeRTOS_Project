@@ -44,6 +44,7 @@ ThirdParty/FreeRTOS-Plus-TCP/portable/NetworkInterface/STM32/NetworkInterface.o:
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/queue.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IP.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/FreeRTOSIPConfig.h \
+ ../Core/Inc/../../Core/Inc/rtos.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOSIPConfigDefaults.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOSIPDeprecatedDefinitions.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/IPTraceMacroDefaults.h \
@@ -124,6 +125,7 @@ C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/includ
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/queue.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IP.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/FreeRTOSIPConfig.h:
+../Core/Inc/../../Core/Inc/rtos.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOSIPConfigDefaults.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOSIPDeprecatedDefinitions.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/IPTraceMacroDefaults.h:

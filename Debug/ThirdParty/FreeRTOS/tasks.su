@@ -27,6 +27,7 @@
 ../ThirdParty/FreeRTOS/tasks.c:4172:8:pcTaskGetName	24	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS/tasks.c:4385:17:uxTaskGetSystemState	32	static
 ../ThirdParty/FreeRTOS/tasks.c:4546:12:xTaskCatchUpTicks	24	static,ignoring_inline_asm
+../ThirdParty/FreeRTOS/tasks.c:4576:16:xTaskAbortDelay	32	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS/tasks.c:4670:12:xTaskIncrementTick	48	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS/tasks.c:5056:10:vTaskSwitchContext	40	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS/tasks.c:5243:6:vTaskPlaceOnEventList	24	static,ignoring_inline_asm
@@ -41,11 +42,14 @@
 ../ThirdParty/FreeRTOS/tasks.c:5616:17:uxTaskGetTaskNumber	24	static
 ../ThirdParty/FreeRTOS/tasks.c:5643:10:vTaskSetTaskNumber	24	static
 ../ThirdParty/FreeRTOS/tasks.c:5748:8:prvIdleTask	16	static,ignoring_inline_asm
+../ThirdParty/FreeRTOS/tasks.c:5939:10:vTaskSetThreadLocalStoragePointer	32	static,ignoring_inline_asm
+../ThirdParty/FreeRTOS/tasks.c:5963:12:pvTaskGetThreadLocalStoragePointer	24	static
 ../ThirdParty/FreeRTOS/tasks.c:6011:13:prvInitialiseTaskLists	16	static
 ../ThirdParty/FreeRTOS/tasks.c:6043:13:prvCheckTasksWaitingTermination	16	static
 ../ThirdParty/FreeRTOS/tasks.c:6121:10:vTaskGetInfo	32	static
 ../ThirdParty/FreeRTOS/tasks.c:6268:24:prvListTasksWithinSingleList	40	static
 ../ThirdParty/FreeRTOS/tasks.c:6307:35:prvTaskCheckFreeStackSpace	24	static
+../ThirdParty/FreeRTOS/tasks.c:6371:17:uxTaskGetStackHighWaterMark	32	static
 ../ThirdParty/FreeRTOS/tasks.c:6403:17:prvDeleteTCB	16	static
 ../ThirdParty/FreeRTOS/tasks.c:6456:13:prvResetNextTaskUnblockTime	4	static
 ../ThirdParty/FreeRTOS/tasks.c:6480:22:xTaskGetCurrentTaskHandle	16	static

@@ -42,6 +42,7 @@ Core/Src/rtos.o: ../Core/Src/rtos.c ../Core/Inc/rtos.h \
  ../Core/Inc/rng.h ../Core/Inc/main.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IP.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/FreeRTOSIPConfig.h \
+ ../Core/Inc/../../Core/Inc/rtos.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOSIPConfigDefaults.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOSIPDeprecatedDefinitions.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/IPTraceMacroDefaults.h \
@@ -74,7 +75,9 @@ Core/Src/rtos.o: ../Core/Src/rtos.c ../Core/Inc/rtos.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IPv6_Utils.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IPv4.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IPv6.h \
- C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_sockets.h
+ C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_sockets.h \
+ C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IP_Private.h \
+ C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_Sockets.h
 ../Core/Inc/rtos.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/FreeRTOS.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/FreeRTOSConfig.h:
@@ -120,6 +123,7 @@ C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/includ
 ../Core/Inc/main.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IP.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/FreeRTOSIPConfig.h:
+../Core/Inc/../../Core/Inc/rtos.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOSIPConfigDefaults.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOSIPDeprecatedDefinitions.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/IPTraceMacroDefaults.h:
@@ -153,3 +157,5 @@ C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-T
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IPv4.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IPv6.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_sockets.h:
+C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IP_Private.h:
+C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_Sockets.h:

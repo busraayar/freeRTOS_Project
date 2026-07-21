@@ -29,7 +29,10 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h \
  ../Core/Inc/can.h ../Core/Inc/main.h ../Core/Inc/eth.h ../Core/Inc/rng.h \
- ../Core/Inc/gpio.h \
+ ../Core/Inc/tim.h ../Core/Inc/gpio.h \
+ ../Core/Inc/../Src/tasks/AppTask/appTask.h \
+ ../Core/Inc/../Src/tasks/CanTask/canTask.h \
+ ../Core/Inc/../Src/tasks/EthTask/ethTask.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/FreeRTOSIPConfig.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/FreeRTOS.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/FreeRTOSConfig.h \
@@ -38,10 +41,13 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/deprecated_definitions.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/portable/GCC/ARM_CM7/r0p1/portmacro.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/mpu_wrappers.h \
- C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_Routing.h \
- C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IP.h \
+ ../Core/Inc/../../Core/Inc/rtos.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/task.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/list.h \
+ C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/queue.h \
+ C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/task.h \
+ C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_Routing.h \
+ C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IP.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOSIPConfigDefaults.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOSIPDeprecatedDefinitions.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/IPTraceMacroDefaults.h \
@@ -49,8 +55,6 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/portable/Compiler/GCC/pack_struct_start.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/portable/Compiler/GCC/pack_struct_end.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IP_Utils.h \
- C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/queue.h \
- C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/task.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/semphr.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/queue.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_Sockets.h \
@@ -74,7 +78,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IPv4_Utils.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IPv6_Utils.h \
  C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IPv4.h \
- C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IPv6.h
+ C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IPv6.h \
+ ../Core/Inc/../Src/tasks/MqttTask/mqttTask.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h:
 ../Core/Inc/stm32f7xx_hal_conf.h:
@@ -109,7 +114,11 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/main.h:
 ../Core/Inc/eth.h:
 ../Core/Inc/rng.h:
+../Core/Inc/tim.h:
 ../Core/Inc/gpio.h:
+../Core/Inc/../Src/tasks/AppTask/appTask.h:
+../Core/Inc/../Src/tasks/CanTask/canTask.h:
+../Core/Inc/../Src/tasks/EthTask/ethTask.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/FreeRTOSIPConfig.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/FreeRTOS.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/FreeRTOSConfig.h:
@@ -118,10 +127,13 @@ C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/includ
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/deprecated_definitions.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/portable/GCC/ARM_CM7/r0p1/portmacro.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/mpu_wrappers.h:
-C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_Routing.h:
-C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IP.h:
+../Core/Inc/../../Core/Inc/rtos.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/task.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/list.h:
+C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/queue.h:
+C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/task.h:
+C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_Routing.h:
+C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IP.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOSIPConfigDefaults.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOSIPDeprecatedDefinitions.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/IPTraceMacroDefaults.h:
@@ -129,8 +141,6 @@ C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-T
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/portable/Compiler/GCC/pack_struct_start.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/portable/Compiler/GCC/pack_struct_end.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IP_Utils.h:
-C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/queue.h:
-C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/task.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/semphr.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS/include/queue.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_Sockets.h:
@@ -155,3 +165,4 @@ C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-T
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IPv6_Utils.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IPv4.h:
 C:/workspace/PersonalStudy/freeRTOS/FreeRTOS_Projects/ThirdParty/FreeRTOS-Plus-TCP/include/FreeRTOS_IPv6.h:
+../Core/Inc/../Src/tasks/MqttTask/mqttTask.h:

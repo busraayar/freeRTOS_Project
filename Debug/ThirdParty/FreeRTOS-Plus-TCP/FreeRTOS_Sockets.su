@@ -17,6 +17,7 @@
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:2080:8:vSocketClose	24	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:2275:17:prvTCPSetSocketCount	32	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:2352:23:prvSockopt_so_buffer	32	static
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:2418:16:prvSetOptionCallback	32	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:2496:23:prvSetOptionTCPWindows	32	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:2566:23:prvSetOptionLowHighWater	24	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:2607:23:prvSetOptionSetFullSize	24	static
@@ -56,8 +57,9 @@
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:4949:25:pxTCPSocketLookup	40	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:5031:35:FreeRTOS_get_rx_buf	24	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:5060:29:prvTCPCreateStream	40	static
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:5168:17:vTCPAddRxdata_Callback	48	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:5214:17:vTCPAddRxdata_Stored	24	static
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:5261:13:lTCPAddRxdata	32	static
+../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:5261:13:lTCPAddRxdata	40	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:5363:16:FreeRTOS_GetRemoteAddress	24	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:5432:16:FreeRTOS_maywrite	24	static
 ../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.c:5474:16:FreeRTOS_tx_space	24	static

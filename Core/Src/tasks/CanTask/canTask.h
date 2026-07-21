@@ -8,6 +8,6 @@
 #ifndef SRC_TASKS_CANTASK_CANTASK_H_
 #define SRC_TASKS_CANTASK_CANTASK_H_
 
-
+void CanTaskCreate( void );
 
 #endif /* SRC_TASKS_CANTASK_CANTASK_H_ */

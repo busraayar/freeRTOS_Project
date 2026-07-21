@@ -3,6 +3,8 @@
 ../ThirdParty/FreeRTOS/queue.c:566:13:prvInitialiseNewQueue	24	static
 ../ThirdParty/FreeRTOS/queue.c:614:17:prvInitialiseMutex	16	static
 ../ThirdParty/FreeRTOS/queue.c:644:19:xQueueCreateMutex	32	static
+../ThirdParty/FreeRTOS/queue.c:689:18:xQueueGetMutexHolder	32	static,ignoring_inline_asm
+../ThirdParty/FreeRTOS/queue.c:726:18:xQueueGetMutexHolderFromISR	24	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS/queue.c:756:16:xQueueGiveMutexRecursive	40	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS/queue.c:815:16:xQueueTakeMutexRecursive	40	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS/queue.c:902:19:xQueueCreateCountingSemaphore	24	static,ignoring_inline_asm

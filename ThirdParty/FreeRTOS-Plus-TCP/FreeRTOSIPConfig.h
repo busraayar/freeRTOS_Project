@@ -2,7 +2,7 @@
 #define FREERTOS_IP_CONFIG_H
 
 #include "FreeRTOS.h"
-
+#include <../../Core/Inc/rtos.h>
 /* USER CONFIGS */
 
 #define ipconfigUSE_DHCP                    1
@@ -10,14 +10,13 @@
 #define ipconfigUSE_TCP_WIN                 1
 #define ipconfigUSE_IPv4                  	1
 #define ipconfigUSE_IPv6                  	0
-#define ipconfigUSE_TCP                  	1
 
 /*Constants Affecting the TCP/IP Stack Task Execution Behaviour*/
 #define ipconfigEVENT_QUEUE_LENGTH								ipconfigNUM_NETWORK_BUFFER_DESCRIPTORS + 5
-#define ipconfigIP_TASK_PRIORITY								( 3 )
-#define ipconfigIP_TASK_STACK_SIZE_WORDS						( configMINIMAL_STACK_SIZE * 5 )
+#define ipconfigIP_TASK_PRIORITY								( configMAX_PRIORITIES - 1 )
+#define ipconfigIP_TASK_STACK_SIZE_WORDS						( ETH_TASK_STACK_SIZE * 5 )
 #define ipconfigPROCESS_CUSTOM_ETHERNET_FRAMES					0
-#define ipconfigUSE_NETWORK_EVENT_HOOK							0
+#define ipconfigUSE_NETWORK_EVENT_HOOK							1
 
 #define ipconfigBYTE_ORDER										pdFREERTOS_LITTLE_ENDIAN
 #define ipconfigNETWORK_MTU										1500//default degerde tutuyorum
@@ -34,6 +33,7 @@
 #define ipconfigDRIVER_INCLUDED_TX_IP_CHECKSUM					1
 #define ipconfigUSE_LINKED_RX_MESSAGES							0
 #define CHECKSUM_BY_HARDWARE 									1
+#define ipconfigUSE_CALLBACKS 									1
 
 #define ipconfigBUFFER_ALLOC_SECTION    __attribute__((section(".eth_sec")))
 

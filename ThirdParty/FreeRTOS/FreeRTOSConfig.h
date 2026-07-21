@@ -47,9 +47,9 @@
 #define configUSE_TICK_HOOK						0
 #define configCPU_CLOCK_HZ						( SystemCoreClock )
 #define configTICK_RATE_HZ						( 1000 )
-#define configMAX_PRIORITIES					( 5 )
-#define configMINIMAL_STACK_SIZE				( ( unsigned short ) 250 )
-#define configTOTAL_HEAP_SIZE					( ( size_t ) ( 20 * 1024 ) )
+#define configMAX_PRIORITIES					( 7 )
+#define configMINIMAL_STACK_SIZE				( ( unsigned short ) 510 )
+#define configTOTAL_HEAP_SIZE					( ( size_t ) ( 35 * 1024 ) )
 #define configMAX_TASK_NAME_LEN					( 10 )
 //#define configSUPPORT_STATIC_ALLOCATION			0
 //#define configSUPPORT_DYNAMIC_ALLOCATION		1
@@ -63,6 +63,10 @@
 //#define configUSE_MALLOC_FAILED_HOOK			1
 #define configUSE_APPLICATION_TASK_TAG			0
 #define configUSE_COUNTING_SEMAPHORES			1
+#define configNUM_THREAD_LOCAL_STORAGE_POINTERS    3      /* FreeRTOS+FAT requires 2 pointers if a CWD is supported. */
+#define configUSE_ALTERNATIVE_API                  0
+#define configNUM_THREAD_LOCAL_STORAGE_POINTERS    3      /* FreeRTOS+FAT requires 2 pointers if a CWD is supported. */
+#define configRECORD_STACK_HIGH_ADDRESS            1
 
 /* The full demo always has tasks to run so the tick will never be turned off.
 The blinky demo will use the default tickless idle implementation to turn the
@@ -86,19 +90,28 @@ FreeRTOS/Source/tasks.c for limitations. */
 #define configUSE_TIMERS				1
 #define configTIMER_TASK_PRIORITY		( configMAX_PRIORITIES - 1 )
 #define configTIMER_QUEUE_LENGTH		5
-#define configTIMER_TASK_STACK_DEPTH	( configMINIMAL_STACK_SIZE * 2 )
+#define configTIMER_TASK_STACK_DEPTH	( configMINIMAL_STACK_SIZE )
 
 /* Set the following definitions to 1 to include the API function, or zero
 to exclude the API function. */
-#define INCLUDE_vTaskPrioritySet		1
-#define INCLUDE_uxTaskPriorityGet		1
-#define INCLUDE_vTaskDelete				1
-#define INCLUDE_vTaskCleanUpResources	1
-#define INCLUDE_vTaskSuspend			1
-#define INCLUDE_vTaskDelayUntil			1
-#define INCLUDE_vTaskDelay				1
-#define INCLUDE_eTaskGetState			1
-#define INCLUDE_xTimerPendFunctionCall	1
+#define INCLUDE_vTaskPrioritySet                   1
+#define INCLUDE_uxTaskPriorityGet                  1
+#define INCLUDE_vTaskDelete                        1
+#define INCLUDE_vTaskCleanUpResources              0
+#define INCLUDE_vTaskSuspend                       1
+#define INCLUDE_vTaskDelayUntil                    1
+#define INCLUDE_vTaskDelay                         1
+#define INCLUDE_uxTaskGetStackHighWaterMark        1
+#define INCLUDE_xTaskGetSchedulerState             1
+#define INCLUDE_xTimerGetTimerTaskHandle           0
+#define INCLUDE_xTaskGetIdleTaskHandle             0
+#define INCLUDE_xQueueGetMutexHolder               1
+#define INCLUDE_eTaskGetState                      1
+#define INCLUDE_xEventGroupSetBitsFromISR          1
+#define INCLUDE_xTimerPendFunctionCall             1
+#define INCLUDE_xTaskGetCurrentTaskHandle          1
+#define INCLUDE_xTaskAbortDelay                    1
+
 
 /* Cortex-M specific definitions. */
 #ifdef __NVIC_PRIO_BITS
