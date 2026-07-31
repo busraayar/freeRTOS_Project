@@ -25,16 +25,17 @@ SUBDIRS := \
 Core/Src \
 Core/Src/tasks/AppTask \
 Core/Src/tasks/CanTask \
-Core/Src/tasks/EthTask \
+Core/Src/tasks/IPTask \
 Core/Src/tasks/MqttTask \
 Core/Startup \
 Drivers/STM32F7xx_HAL_Driver/Src \
+ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/FreeRTOS-Plus-TCP/source \
+ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/FreeRTOS-Plus-TCP/source/portable/BufferManagement \
+ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/Common \
+ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/STM32/Drivers/F7 \
+ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/STM32 \
+ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/coreMQTT/source \
 ThirdParty/FreeRTOS \
 ThirdParty/FreeRTOS/portable/GCC/ARM_CM7/r0p1 \
 ThirdParty/FreeRTOS/portable/MemMang \
-ThirdParty/FreeRTOS-Plus-TCP \
-ThirdParty/FreeRTOS-Plus-TCP/portable/BufferManagement \
-ThirdParty/FreeRTOS-Plus-TCP/portable/NetworkInterface/Common \
-ThirdParty/FreeRTOS-Plus-TCP/portable/NetworkInterface/STM32/Drivers/F7 \
-ThirdParty/FreeRTOS-Plus-TCP/portable/NetworkInterface/STM32 \
 

@@ -1,5 +1,0 @@
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_DNS_Networking.c:46:16:DNS_BindSocket	1
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_DNS_Networking.c:66:14:DNS_CreateSocket	2
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_DNS_Networking.c:101:16:DNS_SendRequest	2
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_DNS_Networking.c:139:16:DNS_ReadReply	1
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_DNS_Networking.c:168:10:DNS_CloseSocket	1

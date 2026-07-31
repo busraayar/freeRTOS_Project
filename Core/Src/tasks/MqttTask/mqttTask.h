@@ -31,5 +31,4 @@ typedef enum {
 	TCP_SOCSTATE_ERR,
 }TCP_SetSocketState_t;
 
-
 #endif /* SRC_TASKS_MQTTTASK_MQTTTASK_H_ */

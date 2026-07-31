@@ -3,6 +3,8 @@ Debug/
 Release/
 *.o
 *.d
+*.cyclo
+*.mk
 *.su
 *.elf
 *.bin

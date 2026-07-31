@@ -6,4 +6,4 @@
 ../Core/Src/rtos.c:194:23:xApplicationDHCPHook_Multi	24	static
 ../Core/Src/rtos.c:205:6:vApplicationPingReplyHook	16	static
 ../Core/Src/rtos.c:226:12:vSendPing	24	static
-../Core/Src/rtos.c:268:6:vApplicationStackOverflowHook	24	static,ignoring_inline_asm
+../Core/Src/rtos.c:268:6:vApplicationStackOverflowHook	16	static,ignoring_inline_asm

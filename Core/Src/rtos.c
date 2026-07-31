@@ -265,16 +265,10 @@ BaseType_t vSendPing( const int8_t *pcIPAddress )
 
 
 #if (configCHECK_FOR_STACK_OVERFLOW != 0)
-void vApplicationStackOverflowHook( TaskHandle_t xTask,
-                                    char *pcTaskName )
+void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName )
 {
-	( void ) pcTaskName;
-	( void ) xTask;
-
-	/* Run time stack overflow checking is performed if
-	configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook
-	function is called if a stack overflow is detected. */
-	taskDISABLE_INTERRUPTS();
-	for( ;; );
+    /* Kod buraya düşerse hangi task'ın stack'inin taştığını pcTaskName üzerinden görebilirsin! */
+    __disable_irq();
+    for( ;; );
 }
 #endif

@@ -28,7 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include <../Src/tasks/AppTask/appTask.h>
 #include <../Src/tasks/CanTask/canTask.h>
-#include <../Src/tasks/EthTask/ethTask.h>
+#include <../Src/tasks/IPTask/ipTask.h>
 #include <../Src/tasks/MqttTask/mqttTask.h>
 /* USER CODE END Includes */
 
@@ -40,6 +40,8 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
+#define TCP_SERVER_SOCKET   0
+#define TCP_SERVER_PORT     5000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -50,7 +52,6 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -127,6 +128,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
   }
   /* USER CODE END 3 */
 }

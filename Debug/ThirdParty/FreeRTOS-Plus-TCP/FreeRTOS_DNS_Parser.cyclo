@@ -1,4 +1,0 @@
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_DNS_Parser.c:60:16:DNS_ReadNameField	12
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_DNS_Parser.c:174:12:DNS_SkipNameField	9
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_DNS_Parser.c:255:14:DNS_ParseDNSReply	17
-../ThirdParty/FreeRTOS-Plus-TCP/FreeRTOS_DNS_Parser.c:685:14:parseDNSAnswer	25
