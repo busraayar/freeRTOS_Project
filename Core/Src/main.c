@@ -26,10 +26,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <../Src/tasks/AppTask/appTask.h>
-#include <../Src/tasks/CanTask/canTask.h>
 #include <../Src/tasks/IPTask/ipTask.h>
-#include <../Src/tasks/MqttTask/mqttTask.h>
+#include "tasks/AppManager/appTask.h"
+#include "tasks/AppManager/mqtt/mqtt_task.h"
+#include "tasks/CanCommunication/canTask.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -117,7 +117,7 @@ int main(void)
 //  CanTaskCreate();
 //  AppTaskCreate();
   vStartNetwork();
-  MqttTaskCreate();
+  vTCPInitializeTask();
   vTaskStartScheduler();
   /* USER CODE END 2 */
 

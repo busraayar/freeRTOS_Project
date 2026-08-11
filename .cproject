@@ -46,17 +46,19 @@
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F7xx/Include"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core/Inc}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core/Src/tasks/AppTask}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core/Src/tasks/CanTask}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core/Src/tasks/EthTask}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core/Src/tasks/MqttTask}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/FreeRTOS-Plus-TCP/source/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/FreeRTOS-Plus-TCP/source/portable/Compiler/GCC}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/STM32/Drivers/F7}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/coreMQTT/source/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/coreMQTT/source/include/private}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/coreMQTT/source/interface}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core/Src/tasks/AppManager}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core/Src/tasks/CanCommunication}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core/Src/tasks/IPTask}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core/Src/tasks/AppManager/mqtt}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/source/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/source/portable}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/source/portable/Compiler/GCC}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/STM32/Drivers/F7}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/Common}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/coreMQTT/source/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/coreMQTT/source/include/private}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/coreMQTT/source/interface}&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input.776273550" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input"/>
 							</tool>
@@ -77,14 +79,18 @@
 									<listOptionValue builtIn="false" value="../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core/Src/tasks/AppManager}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core/Src/tasks/CanCommunication}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core/Src/tasks/IPTask}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core/Src/tasks/AppManager/mqtt}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/portable/GCC/ARM_CM7/r0p1}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/FreeRTOS-Plus-TCP/source/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/FreeRTOS-Plus-TCP/source/portable/Compiler/GCC}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/STM32/Drivers/F7}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/coreMQTT/source/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/coreMQTT/source/include/private}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/Source/coreMQTT/source/interface}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/source/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/source/portable/Compiler/GCC}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/STM32/Drivers/F7}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/coreMQTT/source/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/coreMQTT/source/include/private}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ThirdParty/FreeRTOS/FreeRTOS-Plus/coreMQTT/source/interface}&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.968576789" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
