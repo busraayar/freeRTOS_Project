@@ -9,23 +9,26 @@
 #include "core_mqtt.h"
 #include "core_mqtt_config.h"
 
-/*------------------ AYARLAR ------------------*/
+TaskHandle_t TcpTaskHandle = NULL;
+F_TCP_UDP_Handler_t xHandler;
+
 #define mqttBROKER_IP     "192.168.2.10"
+//#define mqttBROKER_IP     "broker.hivemq.com"
 #define mqttBROKER_PORT   ( 1883U )
 #define mqttCLIENT_ID     "stm32-gateway-01"
-#define mqttTOPIC         "gateway/test"
+//#define mqttTOPIC         "gateway/test"
+#define mqttTOPIC         "busrayar/test"
 
-/*------------------ MQTT buffer ------------------*/
 static uint8_t ucNetworkBuffer[ 1024 ];
-static uint8_t pPropertiesBuffer[ 1024 ];
 
-/*------------------ Zaman fonksiyonu ------------------*/
-static uint32_t prvGetTimeMs( void )
+static void mqttEventCallback( MQTTContext_t * pMqttContext,
+                              MQTTPacketInfo_t * pPacketInfo,
+                              MQTTDeserializedInfo_t * pDeserializedInfo );
+uint32_t prvGetTimeMs( void )
 {
     return ( uint32_t ) ( xTaskGetTickCount() * portTICK_PERIOD_MS );
 }
 
-/*------------------ Olay callback'i ------------------*/
 static void prvEventCallback( MQTTContext_t * pContext,
                               MQTTPacketInfo_t * pPacketInfo,
                               MQTTDeserializedInfo_t * pDeserializedInfo )
@@ -38,32 +41,71 @@ static void prvEventCallback( MQTTContext_t * pContext,
     }
 }
 
-/*------------------ Transport: GÖNDER ------------------*/
+static void mqttEventCallback( MQTTContext_t * pMqttContext,
+                              MQTTPacketInfo_t * pPacketInfo,
+                              MQTTDeserializedInfo_t * pDeserializedInfo )
+{
+    /* Null pointer kontrolü */
+    if( ( pMqttContext == NULL ) || ( pPacketInfo == NULL ) || ( pDeserializedInfo == NULL ) )
+    {
+        return;
+    }
+
+    /* Gelen paket tiplerini ayrıştırın */
+    switch( pPacketInfo->type )
+    {
+        case MQTT_PACKET_TYPE_CONNACK:
+            printf( "CONNACK paketi alindi. Baglanti basarili!\r\n" );
+            break;
+
+        case MQTT_PACKET_TYPE_PUBLISH:
+            /* Incoming publish verisi */
+            break;
+
+        case MQTT_PACKET_TYPE_SUBACK:
+            printf( "SUBACK alindi.\r\n" );
+            break;
+
+        case MQTT_PACKET_TYPE_PINGRESP:
+            printf( "PINGRESP alindi.\r\n" );
+            break;
+
+        default:
+            //led yak;
+
+            break;
+    }
+}
 static int32_t prvTransportSend( NetworkContext_t * pCtx,
                                  const void * pBuffer, size_t xBytes )
 {
     return FreeRTOS_send( pCtx->xTCPSocket, pBuffer, xBytes, 0 );
 }
 
-/*------------------ Transport: AL ------------------*/
-static int32_t prvTransportRecv( NetworkContext_t * pCtx,
-                                 void * pBuffer, size_t xBytes )
+int32_t prvTransportRecv( NetworkContext_t * pNetworkContext,
+                        void * pBuffer,
+                        size_t bytesToRecv )
 {
-    int32_t lResult = FreeRTOS_recv( pCtx->xTCPSocket, pBuffer, xBytes, 0 );
+    int32_t socketStatus;
 
-    if( lResult == -pdFREERTOS_ERRNO_EWOULDBLOCK )
+    int32_t lResult = FreeRTOS_recv( pNetworkContext->xTCPSocket, pBuffer, bytesToRecv, 0 );
+
+    if( lResult < 0 )
     {
-        lResult = 0;
+        /* Soket hatası */
+        return -1;
     }
-    return lResult;
+
+    return lResult; /* Okunan bayt sayısı (0 veya daha fazla) */
 }
 
-/*------------------ TCP bağlantısı ------------------*/
+/*------------------ TCP connection ------------------*/
 static Socket_t prvTcpConnect( void )
 {
     Socket_t xSocket = FreeRTOS_socket( FREERTOS_AF_INET,
                                         FREERTOS_SOCK_STREAM,
                                         FREERTOS_IPPROTO_TCP );
+
     if( xSocket == FREERTOS_INVALID_SOCKET ) return NULL;
 
     struct freertos_sockaddr xServer = { 0 };
@@ -71,14 +113,17 @@ static Socket_t prvTcpConnect( void )
     xServer.sin_port = FreeRTOS_htons( mqttBROKER_PORT );
     xServer.sin_address.ulIP_IPv4 = FreeRTOS_inet_addr( mqttBROKER_IP );
 
-    TickType_t xTimeout = pdMS_TO_TICKS( 3000 );
-    FreeRTOS_setsockopt( xSocket, 0, FREERTOS_SO_RCVTIMEO, &xTimeout, sizeof( xTimeout ) );
-    FreeRTOS_setsockopt( xSocket, 0, FREERTOS_SO_SNDTIMEO, &xTimeout, sizeof( xTimeout ) );
+    TickType_t xReceiveTimeout = pdMS_TO_TICKS( 500 );
 
-    if( FreeRTOS_connect( xSocket, &xServer, sizeof( xServer ) ) != 0 )
+    FreeRTOS_setsockopt( xSocket,
+                         0,
+                         FREERTOS_SO_RCVTIMEO,
+                         &xReceiveTimeout,
+                         sizeof( xReceiveTimeout ) );
+
+    if(FreeRTOS_connect( xSocket, &xServer, sizeof( xServer ) ) != 0)
     {
-        FreeRTOS_closesocket( xSocket );
-        return NULL;
+    	return NULL;
     }
     return xSocket;
 }
@@ -87,8 +132,6 @@ static Socket_t prvTcpConnect( void )
 void vMQTTTask( void * pvParameters )
 {
     ( void ) pvParameters;
-
-    vTaskDelay( pdMS_TO_TICKS( 3000 ) );
 
     static NetworkContext_t xNetworkCtx;
     static TransportInterface_t xTransport;
@@ -101,20 +144,20 @@ void vMQTTTask( void * pvParameters )
         Socket_t xSocket = prvTcpConnect();
         if( xSocket == NULL )
         {
-            printf( "TCP baglanti hatasi\r\n" );
+            printf( "TCP connection error\r\n" );
             vTaskDelay( pdMS_TO_TICKS( 5000 ) );
             continue;
         }
 
         xNetworkCtx.xTCPSocket = xSocket;
-        xTransport.pNetworkContext = &xNetworkCtx;
         xTransport.send = prvTransportSend;
+        xTransport.pNetworkContext = &xNetworkCtx;
         xTransport.recv = prvTransportRecv;
 
         if( MQTT_Init( &xMqttCtx,
         			   &xTransport,
 					   prvGetTimeMs,
-                       ( MQTTEventCallback_t )prvEventCallback,
+                       ( MQTTEventCallback_t )mqttEventCallback,
 					   &xBuffer ) != MQTTSuccess )
         {
             FreeRTOS_closesocket( xSocket );
@@ -129,27 +172,31 @@ void vMQTTTask( void * pvParameters )
         xConnect.clientIdentifierLength = ( uint16_t ) strlen( mqttCLIENT_ID );
 
         bool xSessionPresent;
-        if( MQTT_Connect( &xMqttCtx, &xConnect, NULL, 5000,
-                          &xSessionPresent, NULL ,NULL ) != MQTTSuccess )
-        {
-            printf( "MQTT CONNECT hatasi\r\n" );
-            FreeRTOS_closesocket( xSocket );
-            vTaskDelay( pdMS_TO_TICKS( 5000 ) );
-            continue;
+        MQTTStatus_t status;
+        status = MQTT_Connect(&xMqttCtx, &xConnect, NULL, 5000, &xSessionPresent, NULL, NULL);
+        if(status != MQTTSuccess){
+        	printf( "MQTT CONNECT ERROR: Code = %d (0x%X)\r\n", status, status );
+
+			FreeRTOS_closesocket( xSocket );
+			xSocket = FREERTOS_INVALID_SOCKET;
+			vTaskDelay( pdMS_TO_TICKS( 5000 ) );
+			continue;
         }
-        printf( "MQTT BAGLANDI!\r\n" );
+
+        printf( "MQTT CONNECTED!\r\n" );
 
         TickType_t xLastPublish = xTaskGetTickCount();
 
-        for( ;; )   /* İÇ DÖNGÜ: ProcessLoop + publish */
+        for( ;; )
         {
             if( MQTT_ProcessLoop( &xMqttCtx ) != MQTTSuccess )
             {
+                FreeRTOS_closesocket( xSocket );
+    			xSocket = FREERTOS_INVALID_SOCKET;
                 printf( "Baglanti koptu\r\n" );
-                break;   /* dış döngüye düş → yeniden bağlan */
+                break;
             }
 
-            /* 5 saniyede bir test mesajı yayınla */
             if( ( xTaskGetTickCount() - xLastPublish ) >= pdMS_TO_TICKS( 5000 ) )
             {
                 xLastPublish = xTaskGetTickCount();
@@ -164,11 +211,11 @@ void vMQTTTask( void * pvParameters )
                 xPub.pTopicName      = mqttTOPIC;
                 xPub.topicNameLength = ( uint16_t ) strlen( mqttTOPIC );
                 xPub.pPayload        = pcPayload;
-                xPub.payloadLength   = ( size_t ) iLen;
+                xPub.payloadLength   = (size_t)strlen("Hello World");//( size_t ) iLen;
 
                 if( MQTT_Publish( &xMqttCtx,
                 				  &xPub,
-								  0,						//QoS0 oldugu icin 0 kullanabiliriz
+								  0,
 								  NULL ) == MQTTSuccess )
                     printf( "Publish OK\r\n" );
             }
@@ -177,6 +224,25 @@ void vMQTTTask( void * pvParameters )
         }
 
         FreeRTOS_closesocket( xSocket );
-        vTaskDelay( pdMS_TO_TICKS( 3000 ) );
     }
 }
+
+void vTCPInitializeTask( void ){
+	BaseType_t xReturned;
+
+	xReturned = xTaskCreate(
+			vMQTTTask,
+			"TCP TASK",
+			MQTT_TASK_STACK_SIZE,
+			( void * )1,
+			MQTT_TASK_PRIORITY,
+			&TcpTaskHandle);
+
+    if( xReturned == pdPASS )
+    {
+        /* The task was created. Use the task's handle to delete the task. */
+//        vTaskDelete( CanTaskHandle );
+    }
+}
+
+

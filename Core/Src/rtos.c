@@ -9,6 +9,7 @@
 #include "rtos.h"
 #include "rng.h"
 
+#include <FreeRTOS.h>
 #include <FreeRTOS_IP.h>
 /* FreeRTOS-Plus-TCP sockets include. */
 #include "FreeRTOS_sockets.h"

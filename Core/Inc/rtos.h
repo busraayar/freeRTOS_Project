@@ -19,16 +19,14 @@
 
 /* Task Priorities */
 #define CAN_TASK_PRIORITY					( 1 )
-#define APP_TASK_PRIORITY					( 4 )
-#define MQTT_TASK_PRIORITY					( 2 )
-#define TCP_TASK_PRIORITY					( 3 )
+#define APP_TASK_PRIORITY					( 2 )
+#define MQTT_TASK_PRIORITY					( 3 )
 
 #if configSUPPORT_DYNAMIC_ALLOCATION
 #define CAN_TASK_STACK_SIZE					configMINIMAL_STACK_SIZE//configMINIMAL_STACK_SIZE
 #define APP_TASK_STACK_SIZE					configMINIMAL_STACK_SIZE
-#define MQTT_TASK_STACK_SIZE				configMINIMAL_STACK_SIZE
+#define MQTT_TASK_STACK_SIZE				1024
 #define ETH_TASK_STACK_SIZE					300
-#define TCP_TASK_STACK_SIZE					1024
 
 #else
 #define CAN_TASK_STACK_SIZE					configMINIMAL_STACK_SIZE//configMINIMAL_STACK_SIZE
@@ -39,4 +37,20 @@
 
 #define TCP_CONNECTION_TIMEOUT_TICK			5000/portTICK_PERIOD_MS
 
+#define TASK_QUEUE_LENGTH_MQTT						24
+#define TASK_QUEUE_LENGTH_CAN						24
+#define MAX_QUEUE_MSG_LEN_IN_BYTES					24
+
+
+typedef struct {
+	QueueHandle_t mqttTaskQueue;
+	QueueHandle_t canTaskQueue;
+}TaskAppQueues_s;
+
+typedef struct
+{
+	uint8_t msgID;
+	uint16_t len;
+	uint8_t data[ MAX_QUEUE_MSG_LEN_IN_BYTES ];
+}QueueMsg_s;
 #endif /* INC_RTOS_H_ */

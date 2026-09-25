@@ -12,6 +12,5 @@
 #include <FreeRTOSIPConfig.h>
 
 void vStartNetwork( void );
-void vTCPInitializeTask( void );
 
 #endif /* SRC_TASKS_IPTASK_IPTASK_H_ */

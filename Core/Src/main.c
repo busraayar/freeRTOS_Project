@@ -22,10 +22,13 @@
 #include "eth.h"
 #include "rng.h"
 #include "tim.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "rtos.h"
+#include "queue.h"
 #include <../Src/tasks/IPTask/ipTask.h>
 #include "tasks/AppManager/appTask.h"
 #include "tasks/AppManager/mqtt/mqtt_task.h"
@@ -39,9 +42,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
-#define TCP_SERVER_SOCKET   0
-#define TCP_SERVER_PORT     5000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -52,6 +52,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+TaskAppQueues_s TaskQueues;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -109,16 +110,21 @@ int main(void)
   MX_RNG_Init();
   MX_ETH_Init();
   MX_TIM1_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-
   SCB_DisableICache();
   SCB_DisableDCache();
 
-//  CanTaskCreate();
-//  AppTaskCreate();
+  TaskQueues.mqttTaskQueue = xQueueCreate(TASK_QUEUE_LENGTH_MQTT, sizeof(TaskAppQueues_s));
+  TaskQueues.canTaskQueue = xQueueCreate(TASK_QUEUE_LENGTH_CAN, sizeof(TaskAppQueues_s));
+
+
   vStartNetwork();
   vTCPInitializeTask();
+  AppTaskCreate();
   vTaskStartScheduler();
+//  CanTaskCreate();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */

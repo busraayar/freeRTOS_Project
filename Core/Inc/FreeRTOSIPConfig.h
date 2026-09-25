@@ -13,6 +13,7 @@
 
 /*Constants Affecting the TCP/IP Stack Task Execution Behaviour*/
 #define ipconfigEVENT_QUEUE_LENGTH								ipconfigNUM_NETWORK_BUFFER_DESCRIPTORS + 5
+/* En yüksek öncelik IP taskın olacak */
 #define ipconfigIP_TASK_PRIORITY								( configMAX_PRIORITIES - 1 )
 #define ipconfigIP_TASK_STACK_SIZE_WORDS						( ETH_TASK_STACK_SIZE * 5 )
 #define ipconfigPROCESS_CUSTOM_ETHERNET_FRAMES					0
@@ -34,6 +35,11 @@
 #define ipconfigUSE_LINKED_RX_MESSAGES							0
 #define CHECKSUM_BY_HARDWARE 									1
 #define ipconfigUSE_CALLBACKS 									1
+
+#define ipconfigUSE_DNS											1
+#define ipconfigUSE_DNS_CACHE									1
+#define ipconfigDNS_CACHE_NAME_LENGTH          					32
+#define ipconfigDNS_REQUEST_ATTEMPTS							2
 
 #define ipconfigBUFFER_ALLOC_SECTION    __attribute__((section(".eth_sec")))
 
@@ -82,16 +88,12 @@
 //#define ipconfigDHCP_FALL_BACK_AUTO_IP
 //#define ipconfigDHCP_REGISTER_HOSTNAME
 //#define ipconfigDNS_CACHE_ADDRESSES_PER_ENTRY
-//#define ipconfigDNS_CACHE_ENTRIES
 //#define ipconfigDNS_CACHE_NAME_LENGTH
-//#define ipconfigDNS_REQUEST_ATTEMPTS
 //#define ipconfigDNS_USE_CALLBACKS
 //#define ipconfigMAXIMUM_DISCOVER_TX_PERIOD
 //#define ipconfigUSE_DHCP
 //#define ipconfigUSE_DHCPv6
 //#define ipconfigUSE_DHCP_HOOK
-//#define ipconfigUSE_DNS
-//#define ipconfigUSE_DNS_CACHE
 //#define ipconfigUSE_LLMNR
 //#define ipconfigUSE_NBNS
 //#define ipconfigUSE_MDNS
