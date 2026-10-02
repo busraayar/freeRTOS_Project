@@ -16,6 +16,7 @@
 #include "queue.h"
 
 #define BufferLen				1536u
+#define UNDEFINED_PTR			((void*)(0xFFFFFFFF))
 
 /* Task Priorities */
 #define CAN_TASK_PRIORITY					( 1 )
@@ -35,22 +36,16 @@
 #define MQTT_TASK_STACK_SIZE				configMINIMAL_STACK_SIZE
 #endif
 
-#define TCP_CONNECTION_TIMEOUT_TICK			5000/portTICK_PERIOD_MS
+#define TCP_CONNECTION_TIMEOUT_TICK				( 5000/portTICK_PERIOD_MS )
+#define MQTT_TASK_QUEUE_RECEIVE_TIMEOUT_MS		( 5/portTICK_PERIOD_MS )
 
 #define TASK_QUEUE_LENGTH_MQTT						24
 #define TASK_QUEUE_LENGTH_CAN						24
 #define MAX_QUEUE_MSG_LEN_IN_BYTES					24
-
 
 typedef struct {
 	QueueHandle_t mqttTaskQueue;
 	QueueHandle_t canTaskQueue;
 }TaskAppQueues_s;
 
-typedef struct
-{
-	uint8_t msgID;
-	uint16_t len;
-	uint8_t data[ MAX_QUEUE_MSG_LEN_IN_BYTES ];
-}QueueMsg_s;
 #endif /* INC_RTOS_H_ */

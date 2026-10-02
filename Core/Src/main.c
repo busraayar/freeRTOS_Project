@@ -29,6 +29,7 @@
 /* USER CODE BEGIN Includes */
 #include "rtos.h"
 #include "queue.h"
+#include "app_config.h"
 #include <../Src/tasks/IPTask/ipTask.h>
 #include "tasks/AppManager/appTask.h"
 #include "tasks/AppManager/mqtt/mqtt_task.h"
@@ -52,7 +53,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-TaskAppQueues_s TaskQueues;
+TaskAppQueues_s TaskQueues = {NULL, NULL};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -115,12 +116,12 @@ int main(void)
   SCB_DisableICache();
   SCB_DisableDCache();
 
-  TaskQueues.mqttTaskQueue = xQueueCreate(TASK_QUEUE_LENGTH_MQTT, sizeof(TaskAppQueues_s));
-  TaskQueues.canTaskQueue = xQueueCreate(TASK_QUEUE_LENGTH_CAN, sizeof(TaskAppQueues_s));
+  TaskQueues.mqttTaskQueue = xQueueCreate(TASK_QUEUE_LENGTH_MQTT, sizeof(MqttMessage_s));
+  TaskQueues.canTaskQueue = xQueueCreate(TASK_QUEUE_LENGTH_CAN, sizeof(AppMessage_t));
 
 
   vStartNetwork();
-  vTCPInitializeTask();
+  vTCPInitializeTask(&TaskQueues);
   AppTaskCreate();
   vTaskStartScheduler();
 //  CanTaskCreate();

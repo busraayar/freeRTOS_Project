@@ -8,19 +8,28 @@
 #include "FreeRTOS_IP.h"
 #include "core_mqtt.h"
 #include "core_mqtt_config.h"
+#include "../Src/app_config.h"
 
-TaskHandle_t TcpTaskHandle = NULL;
+
 F_TCP_UDP_Handler_t xHandler;
 
 #define mqttBROKER_IP     "192.168.2.10"
-//#define mqttBROKER_IP     "broker.hivemq.com"
 #define mqttBROKER_PORT   ( 1883U )
 #define mqttCLIENT_ID     "stm32-gateway-01"
-//#define mqttTOPIC         "gateway/test"
 #define mqttTOPIC         "busrayar/test"
 
-static uint8_t ucNetworkBuffer[ 1024 ];
+#define NUMBER_OF_SUBSCRIPTIONS		3
+#define mqttGREENLedTOPIC		"busrayar/green"
+#define mqttBLUELedTOPIC		"busrayar/blue"
+#define mqttREDLedTOPIC			"busrayar/red"
 
+static uint8_t ucNetworkBuffer[ 1024 ];
+static TaskAppQueues_s* TaskQueuesPtr = UNDEFINED_PTR;
+static TaskHandle_t TcpTaskHandle = UNDEFINED_PTR;
+static TaskHandle_t canTaskHandle = UNDEFINED_PTR;
+
+mqtt_topic_t GetTopicId(const char *topic);
+static MQTTStatus_t mqttSubscribeTopic( MQTTContext_t * pMqttContext );
 static void mqttEventCallback( MQTTContext_t * pMqttContext,
                               MQTTPacketInfo_t * pPacketInfo,
                               MQTTDeserializedInfo_t * pDeserializedInfo );
@@ -33,7 +42,8 @@ static void prvEventCallback( MQTTContext_t * pContext,
                               MQTTPacketInfo_t * pPacketInfo,
                               MQTTDeserializedInfo_t * pDeserializedInfo )
 {
-    ( void ) pContext; ( void ) pDeserializedInfo;
+    ( void ) pContext;
+    ( void ) pDeserializedInfo;
 
     if( ( pPacketInfo->type & 0xF0U ) == MQTT_PACKET_TYPE_PUBLISH )
     {
@@ -41,91 +51,94 @@ static void prvEventCallback( MQTTContext_t * pContext,
     }
 }
 
-static void mqttEventCallback( MQTTContext_t * pMqttContext,
-                              MQTTPacketInfo_t * pPacketInfo,
-                              MQTTDeserializedInfo_t * pDeserializedInfo )
-{
-    /* Null pointer kontrolü */
-    if( ( pMqttContext == NULL ) || ( pPacketInfo == NULL ) || ( pDeserializedInfo == NULL ) )
-    {
-        return;
-    }
-
-    /* Gelen paket tiplerini ayrıştırın */
-    switch( pPacketInfo->type )
-    {
-        case MQTT_PACKET_TYPE_CONNACK:
-            printf( "CONNACK paketi alindi. Baglanti basarili!\r\n" );
-            break;
-
-        case MQTT_PACKET_TYPE_PUBLISH:
-            /* Incoming publish verisi */
-            break;
-
-        case MQTT_PACKET_TYPE_SUBACK:
-            printf( "SUBACK alindi.\r\n" );
-            break;
-
-        case MQTT_PACKET_TYPE_PINGRESP:
-            printf( "PINGRESP alindi.\r\n" );
-            break;
-
-        default:
-            //led yak;
-
-            break;
-    }
-}
 static int32_t prvTransportSend( NetworkContext_t * pCtx,
-                                 const void * pBuffer, size_t xBytes )
+                                 const void * pBuffer,
+								 size_t xBytes )
 {
     return FreeRTOS_send( pCtx->xTCPSocket, pBuffer, xBytes, 0 );
 }
 
-int32_t prvTransportRecv( NetworkContext_t * pNetworkContext,
+int32_t prvTransportRecv( NetworkContext_t * pCtx,
                         void * pBuffer,
-                        size_t bytesToRecv )
+                        size_t xBytes )
 {
-    int32_t socketStatus;
-
-    int32_t lResult = FreeRTOS_recv( pNetworkContext->xTCPSocket, pBuffer, bytesToRecv, 0 );
+    int32_t lResult = FreeRTOS_recv( pCtx->xTCPSocket, pBuffer, xBytes, 0 );
 
     if( lResult < 0 )
     {
-        /* Soket hatası */
+
         return -1;
     }
 
-    return lResult; /* Okunan bayt sayısı (0 veya daha fazla) */
+    return lResult;
 }
 
 /*------------------ TCP connection ------------------*/
 static Socket_t prvTcpConnect( void )
 {
-    Socket_t xSocket = FreeRTOS_socket( FREERTOS_AF_INET,
-                                        FREERTOS_SOCK_STREAM,
-                                        FREERTOS_IPPROTO_TCP );
+	Socket_t xSocket;
+	struct freertos_sockaddr serverAddress = { 0 };
+	struct freertos_sockaddr localAddress = { 0 };
+	TickType_t receiveTimeout;
+	BaseType_t result;
 
-    if( xSocket == FREERTOS_INVALID_SOCKET ) return NULL;
+	xSocket = FreeRTOS_socket( FREERTOS_AF_INET,
+								FREERTOS_SOCK_STREAM,
+								FREERTOS_IPPROTO_TCP );
 
-    struct freertos_sockaddr xServer = { 0 };
-    xServer.sin_family = FREERTOS_AF_INET;
-    xServer.sin_port = FreeRTOS_htons( mqttBROKER_PORT );
-    xServer.sin_address.ulIP_IPv4 = FreeRTOS_inet_addr( mqttBROKER_IP );
+	if( xSocket == FREERTOS_INVALID_SOCKET )
+	{
+		return FREERTOS_INVALID_SOCKET;
+	}
 
-    TickType_t xReceiveTimeout = pdMS_TO_TICKS( 500 );
+	receiveTimeout = pdMS_TO_TICKS( 500 );
 
-    FreeRTOS_setsockopt( xSocket,
-                         0,
-                         FREERTOS_SO_RCVTIMEO,
-                         &xReceiveTimeout,
-                         sizeof( xReceiveTimeout ) );
+	result = FreeRTOS_setsockopt( xSocket,
+									0,
+									FREERTOS_SO_RCVTIMEO,
+									&receiveTimeout,
+									sizeof( receiveTimeout ) );
 
-    if(FreeRTOS_connect( xSocket, &xServer, sizeof( xServer ) ) != 0)
-    {
-    	return NULL;
-    }
-    return xSocket;
+	if( result != 0 )
+	{
+		printf( "setsockopt failed: %ld\r\n", ( long ) result );
+		FreeRTOS_closesocket( xSocket );
+		return FREERTOS_INVALID_SOCKET;
+	}
+
+	localAddress.sin_family = FREERTOS_AF_INET;
+	localAddress.sin_port = 0;
+	localAddress.sin_address.ulIP_IPv4 = 0;
+
+	result = FreeRTOS_bind( xSocket,
+							&localAddress,
+							sizeof( localAddress ) );
+
+	if( result != 0 )
+	{
+		printf( "bind failed: %ld\r\n", ( long ) result );
+		FreeRTOS_closesocket( xSocket );
+		return FREERTOS_INVALID_SOCKET;
+	}
+
+	serverAddress.sin_family = FREERTOS_AF_INET;
+	serverAddress.sin_port =
+	FreeRTOS_htons( mqttBROKER_PORT );
+	serverAddress.sin_address.ulIP_IPv4 =
+	FreeRTOS_inet_addr( mqttBROKER_IP );
+
+	result = FreeRTOS_connect( xSocket,
+								&serverAddress,
+								sizeof( serverAddress ) );
+
+	if( result != 0 )
+	{
+		printf( "connect failed: %ld\r\n", ( long ) result );
+		FreeRTOS_closesocket( xSocket );
+		return FREERTOS_INVALID_SOCKET;
+	}
+
+	return xSocket;
 }
 
 /*------------------ MQTT TASK ------------------*/
@@ -133,6 +146,7 @@ void vMQTTTask( void * pvParameters )
 {
     ( void ) pvParameters;
 
+    MqttMessage_s queueRxMsg;
     static NetworkContext_t xNetworkCtx;
     static TransportInterface_t xTransport;
     static MQTTContext_t xMqttCtx;
@@ -149,92 +163,127 @@ void vMQTTTask( void * pvParameters )
             continue;
         }
 
-        xNetworkCtx.xTCPSocket = xSocket;
-        xTransport.send = prvTransportSend;
-        xTransport.pNetworkContext = &xNetworkCtx;
-        xTransport.recv = prvTransportRecv;
+	xNetworkCtx.xTCPSocket = xSocket;
+	xTransport.send = prvTransportSend;
+	xTransport.pNetworkContext = &xNetworkCtx;
+	xTransport.recv = prvTransportRecv;
 
-        if( MQTT_Init( &xMqttCtx,
-        			   &xTransport,
-					   prvGetTimeMs,
-                       ( MQTTEventCallback_t )mqttEventCallback,
-					   &xBuffer ) != MQTTSuccess )
-        {
-            FreeRTOS_closesocket( xSocket );
-            vTaskDelay( pdMS_TO_TICKS( 5000 ) );
-            continue;
-        }
+	if( MQTT_Init( &xMqttCtx,
+				   &xTransport,
+				   prvGetTimeMs,
+				   ( MQTTEventCallback_t )mqttEventCallback,
+				   &xBuffer ) != MQTTSuccess )
+	{
+		FreeRTOS_closesocket( xSocket );
+		vTaskDelay( pdMS_TO_TICKS( 5000 ) );
+	}
 
-        MQTTConnectInfo_t xConnect = { 0 };
-        xConnect.cleanSession = true;
-        xConnect.keepAliveSeconds = 60;
-        xConnect.pClientIdentifier = mqttCLIENT_ID;
-        xConnect.clientIdentifierLength = ( uint16_t ) strlen( mqttCLIENT_ID );
+	MQTTConnectInfo_t xConnect = { 0 };
+	xConnect.cleanSession = true;
+	xConnect.keepAliveSeconds = 60;
+	xConnect.pClientIdentifier = mqttCLIENT_ID;
+	xConnect.clientIdentifierLength = ( uint16_t ) strlen( mqttCLIENT_ID );
 
-        bool xSessionPresent;
-        MQTTStatus_t status;
-        status = MQTT_Connect(&xMqttCtx, &xConnect, NULL, 5000, &xSessionPresent, NULL, NULL);
-        if(status != MQTTSuccess){
-        	printf( "MQTT CONNECT ERROR: Code = %d (0x%X)\r\n", status, status );
+		bool xSessionPresent;
+		MQTTStatus_t status;
+		status = MQTT_Connect(&xMqttCtx, &xConnect, NULL, 2000, &xSessionPresent, NULL, NULL);
+		if(status != MQTTSuccess){
+			printf( "MQTT CONNECT ERROR: Code = %d (0x%X)\r\n", status, status );
 
 			FreeRTOS_closesocket( xSocket );
 			xSocket = FREERTOS_INVALID_SOCKET;
 			vTaskDelay( pdMS_TO_TICKS( 5000 ) );
-			continue;
-        }
+		}
 
-        printf( "MQTT CONNECTED!\r\n" );
+		printf( "MQTT CONNECTED!\r\n" );
 
-        TickType_t xLastPublish = xTaskGetTickCount();
+		TickType_t xLastPublish = xTaskGetTickCount();
 
-        for( ;; )
-        {
-            if( MQTT_ProcessLoop( &xMqttCtx ) != MQTTSuccess )
-            {
-                FreeRTOS_closesocket( xSocket );
-    			xSocket = FREERTOS_INVALID_SOCKET;
-                printf( "Baglanti koptu\r\n" );
-                break;
-            }
+		for( ;; )
+		{
+			static MQTTStatus_t stat = MQTTSuccess;
 
-            if( ( xTaskGetTickCount() - xLastPublish ) >= pdMS_TO_TICKS( 5000 ) )
-            {
-                xLastPublish = xTaskGetTickCount();
+			stat = mqttSubscribeTopic(&xMqttCtx);
+			if(stat != MQTTSuccess){
+				printf("Subscribe Islemi Basarisiz!!!");
+			}
 
-                char pcPayload[ 64 ];
-                int iLen = snprintf( pcPayload, sizeof( pcPayload ),
-                                     "{\"tick\": %lu}",
-                                     ( unsigned long ) xLastPublish );
+			stat = MQTT_ProcessLoop( &xMqttCtx );
+			if( stat == MQTTNeedMoreBytes){
 
-                MQTTPublishInfo_t xPub = { 0 };
-                xPub.qos             = MQTTQoS0;
-                xPub.pTopicName      = mqttTOPIC;
-                xPub.topicNameLength = ( uint16_t ) strlen( mqttTOPIC );
-                xPub.pPayload        = pcPayload;
-                xPub.payloadLength   = (size_t)strlen("Hello World");//( size_t ) iLen;
+			}else if(stat != MQTTSuccess){
+				FreeRTOS_closesocket( xSocket );
+				xSocket = FREERTOS_INVALID_SOCKET;
+				printf( "Baglanti koptu\r\n" );
+				break;
+			}
 
-                if( MQTT_Publish( &xMqttCtx,
-                				  &xPub,
+			if( ( xTaskGetTickCount() - xLastPublish ) >= pdMS_TO_TICKS( 5000 ) )
+			{
+				xLastPublish = xTaskGetTickCount();
+
+				char pcPayload[ 64 ];
+				int iLen = snprintf( pcPayload, sizeof( pcPayload ),
+									 "{\"tick\": %lu}",
+									 ( unsigned long ) xLastPublish );
+
+				MQTTPublishInfo_t xPub = { 0 };
+				xPub.qos             = MQTTQoS0;
+				xPub.pTopicName      = mqttTOPIC;
+				xPub.topicNameLength = ( uint16_t ) strlen( mqttTOPIC );
+				xPub.pPayload        = pcPayload;
+				xPub.payloadLength   = ( size_t ) iLen;
+
+				if( MQTT_Publish( &xMqttCtx,
+								  &xPub,
 								  0,
 								  NULL ) == MQTTSuccess )
-                    printf( "Publish OK\r\n" );
-            }
+					printf( "Publish OK\r\n" );
+			}
+			if(xQueueReceive(TaskQueuesPtr->mqttTaskQueue, &queueRxMsg, MQTT_TASK_QUEUE_RECEIVE_TIMEOUT_MS))
+			{
 
-            vTaskDelay( pdMS_TO_TICKS( 10 ) );
-        }
+				switch (queueRxMsg.topic)
+				{
+					case MQTT_TOPIC_LED_GREEN:
+						//PA5 is a green led for user
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0,  GPIO_PIN_SET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_RESET);
+						break;
+					case MQTT_TOPIC_LED_BLUE:
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_SET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0,  GPIO_PIN_RESET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+						break;
+					case MQTT_TOPIC_LED_RED:
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0,  GPIO_PIN_RESET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_RESET);
+						break;
+					default:
+						break;
+				}
+			}
 
-        FreeRTOS_closesocket( xSocket );
-    }
+
+			vTaskDelay( pdMS_TO_TICKS( 10 ) );
+		}
+
+		FreeRTOS_closesocket( xSocket );
+}
 }
 
-void vTCPInitializeTask( void ){
+void vTCPInitializeTask( TaskAppQueues_s* pTaskQueues ){
 	BaseType_t xReturned;
+
+	TaskQueuesPtr = pTaskQueues;
 
 	xReturned = xTaskCreate(
 			vMQTTTask,
 			"TCP TASK",
 			MQTT_TASK_STACK_SIZE,
-			( void * )1,
+			( void * ) pTaskQueues,
 			MQTT_TASK_PRIORITY,
 			&TcpTaskHandle);
 
@@ -245,4 +294,108 @@ void vTCPInitializeTask( void ){
     }
 }
 
+mqtt_topic_t GetTopicId(const char *topic)
+{
+	mqtt_topic_t ret = MQTT_TOPIC_UNKNOWN;
 
+	if(strcmp(topic, "busrayar/green") == 0){
+		ret = MQTT_TOPIC_LED_GREEN;
+	}else if(strcmp(topic, "busrayar/blue") == 0){
+		ret = MQTT_TOPIC_LED_BLUE;
+	}else if(strcmp(topic, "busrayar/red") == 0){
+		ret = MQTT_TOPIC_LED_RED;
+	}
+
+	return ret;
+}
+
+
+static MQTTStatus_t mqttSubscribeTopic( MQTTContext_t * pMqttContext )
+{
+    MQTTStatus_t xResult = MQTTSuccess;
+
+    uint8_t retryAttempsForSubscribeTopic = 0;
+
+    MQTTSubscribeInfo_t xMQTTSubscription[ NUMBER_OF_SUBSCRIPTIONS ];
+    bool xFailedSubscribeToTopic = false;
+
+    memset( ( void * ) &xMQTTSubscription, 0x00, sizeof( xMQTTSubscription ) );
+
+    xMQTTSubscription[0].qos = MQTTQoS0;
+    xMQTTSubscription[0].pTopicFilter = mqttGREENLedTOPIC;
+    xMQTTSubscription[0].topicFilterLength = strlen( mqttGREENLedTOPIC );
+
+    xMQTTSubscription[1].qos = MQTTQoS0;
+    xMQTTSubscription[1].pTopicFilter = mqttBLUELedTOPIC;
+    xMQTTSubscription[1].topicFilterLength = strlen( mqttBLUELedTOPIC );
+
+    xMQTTSubscription[2].qos = MQTTQoS0;
+    xMQTTSubscription[2].pTopicFilter = mqttREDLedTOPIC;
+    xMQTTSubscription[2].topicFilterLength = strlen( mqttREDLedTOPIC );
+
+    do {
+    	uint16_t packetId = MQTT_GetPacketId(pMqttContext);
+
+    	MQTTPropBuilder_t propertyBuilder;
+		uint8_t propertyBuffer[ 100 ];
+		size_t propertyBufferLength = sizeof( propertyBuffer );
+		xResult = MQTTPropertyBuilder_Init( &propertyBuilder, propertyBuffer, propertyBufferLength );
+
+    	xResult = MQTT_Subscribe(pMqttContext, xMQTTSubscription, NUMBER_OF_SUBSCRIPTIONS, packetId, &propertyBuilder);
+    	retryAttempsForSubscribeTopic++;
+
+    	if( xResult == MQTTSuccess ){
+    		xFailedSubscribeToTopic = true;
+    	}
+
+	} while (retryAttempsForSubscribeTopic < NUMBER_OF_SUBSCRIPTIONS &&
+			xFailedSubscribeToTopic);
+
+    return xResult;
+
+}
+
+static void mqttEventCallback( MQTTContext_t * pMqttContext,
+                              MQTTPacketInfo_t * pPacketInfo,
+                              MQTTDeserializedInfo_t * pDeserializedInfo )
+{
+	( void ) pMqttContext;
+
+
+	switch( pPacketInfo->type )
+    {
+        case MQTT_PACKET_TYPE_CONNACK:
+            break;
+
+        case MQTT_PACKET_TYPE_PUBLISH:
+        {
+        	mqtt_topic_t topicID;
+        	topicID = GetTopicId(pDeserializedInfo->pPublishInfo->pTopicName);
+
+        	MqttMessage_s mqttRxMessage = {0};
+
+        	mqttRxMessage.topic = topicID;
+        	mqttRxMessage.payloadLength = pDeserializedInfo->pPublishInfo->payloadLength;
+        	memcpy(mqttRxMessage.payload, pDeserializedInfo->pPublishInfo->pPayload, mqttRxMessage.payloadLength);
+
+        	xQueueSend(TaskQueuesPtr->mqttTaskQueue, &mqttRxMessage, 0);
+
+        	break;
+        }
+        case MQTT_PACKET_TYPE_PUBACK:
+            /* Incoming publish verisi */
+            break;
+
+        case MQTT_PACKET_TYPE_SUBACK:
+            printf( "SUBACK alindi.\r\n" );
+            break;
+
+        case MQTT_PACKET_TYPE_PINGRESP:
+            printf( "PINGRESP alindi.\r\n" );
+            break;
+
+        default:
+
+            break;
+    }
+}
