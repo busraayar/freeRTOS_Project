@@ -21,7 +21,32 @@
 #include "can.h"
 
 /* USER CODE BEGIN 0 */
-
+const CAN_FilterTypeDef sFilterConfigFIFO0[16] = {
+	  {
+		  .FilterActivation 	= CAN_FILTER_ENABLE,
+		  .FilterBank 			= 0,
+		  .FilterFIFOAssignment = CAN_FILTER_FIFO0,
+		  .FilterScale			= CAN_FILTERSCALE_16BIT,
+		  .FilterMode			= CAN_FILTERMODE_IDMASK,
+		  .SlaveStartFilterBank	= 28u,
+		  .FilterIdHigh 		= (0x0100 << 5),
+		  .FilterIdLow 			= (0x0201 << 5),
+		  .FilterMaskIdHigh 	= (0x0FF0 << 5), // [0x0100 - 0x0109] aralığındaki mesajları kabul eder
+		  .FilterMaskIdLow 		= (0x0FFF << 5), // 0x0201 mesajını kabul eder
+	  },
+	  {
+		  .FilterActivation 	= CAN_FILTER_ENABLE,
+		  .FilterBank 			= 1,
+		  .FilterFIFOAssignment = CAN_FILTER_FIFO0,
+		  .FilterScale			= CAN_FILTERSCALE_16BIT,
+		  .FilterMode			= CAN_FILTERMODE_IDLIST,
+		  .SlaveStartFilterBank	= 28u,
+		  .FilterIdHigh 		= (0x0758 << 5),
+		  .FilterIdLow 			= (0x0889 << 5),
+		  .FilterMaskIdHigh 	= (0x0001 << 5), // IDLIST old için mask lar da filter görevi görür
+		  .FilterMaskIdLow 		= (0x004C << 5),
+	  }
+};
 /* USER CODE END 0 */
 
 CAN_HandleTypeDef hcan1;
@@ -36,6 +61,7 @@ void MX_CAN1_Init(void)
 
   /* USER CODE BEGIN CAN1_Init 1 */
 
+
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
   hcan1.Init.Prescaler = 32;
@@ -49,12 +75,15 @@ void MX_CAN1_Init(void)
   hcan1.Init.AutoRetransmission = DISABLE;
   hcan1.Init.ReceiveFifoLocked = DISABLE;
   hcan1.Init.TransmitFifoPriority = DISABLE;
+
+
   if (HAL_CAN_Init(&hcan1) != HAL_OK)
   {
     Error_Handler();
   }
   /* USER CODE BEGIN CAN1_Init 2 */
 
+  HAL_CAN_ConfigFilter(&hcan1, sFilterConfigFIFO0);
   /* USER CODE END CAN1_Init 2 */
 
 }
