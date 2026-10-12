@@ -30,6 +30,7 @@
 #include "rtos.h"
 #include "queue.h"
 #include "app_config.h"
+#include "stm32f767xx.h"
 #include <../Src/tasks/IPTask/ipTask.h>
 #include "tasks/AppManager/appTask.h"
 #include "tasks/AppManager/mqtt/mqtt_task.h"
@@ -124,7 +125,7 @@ int main(void)
   vTCPInitializeTask(&TaskQueues);
   AppTaskCreate();
   vTaskStartScheduler();
-//  CanTaskCreate();
+  CanTaskCreate(&TaskQueues);
 
   /* USER CODE END 2 */
 

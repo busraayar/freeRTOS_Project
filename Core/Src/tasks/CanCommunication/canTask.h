@@ -8,6 +8,6 @@
 #ifndef SRC_TASKS_CANCOMMUNICATION_CANTASK_H_
 #define SRC_TASKS_CANCOMMUNICATION_CANTASK_H_
 
-void CanTaskCreate( void );
+void CanTaskCreate( TaskAppQueues_s* pTaskQueues );
 
 #endif /* SRC_TASKS_CANCOMMUNICATION_CANTASK_H_ */

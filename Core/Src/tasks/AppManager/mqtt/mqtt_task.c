@@ -16,12 +16,12 @@ F_TCP_UDP_Handler_t xHandler;
 #define mqttBROKER_IP     "192.168.2.10"
 #define mqttBROKER_PORT   ( 1883U )
 #define mqttCLIENT_ID     "stm32-gateway-01"
-#define mqttTOPIC         "busrayar/test"
+#define mqttTOPIC         "gateaway/test"
 
 #define NUMBER_OF_SUBSCRIPTIONS		3
-#define mqttGREENLedTOPIC		"busrayar/green"
-#define mqttBLUELedTOPIC		"busrayar/blue"
-#define mqttREDLedTOPIC			"busrayar/red"
+#define mqtt_GATEAWAY_COMMAND		"gateaway/cmd"
+#define mqtt_GATEAWAY_STATUS		"gateaway/status"
+#define mqtt_GATEAWAY_CAN			"gateaway/settings"
 
 static uint8_t ucNetworkBuffer[ 1024 ];
 static TaskAppQueues_s* TaskQueuesPtr = UNDEFINED_PTR;
@@ -298,11 +298,11 @@ mqtt_topic_t GetTopicId(const char *topic)
 {
 	mqtt_topic_t ret = MQTT_TOPIC_UNKNOWN;
 
-	if(strcmp(topic, "busrayar/green") == 0){
+	if(strcmp(topic, "gateaway/cmd") == 0){
 		ret = MQTT_TOPIC_LED_GREEN;
-	}else if(strcmp(topic, "busrayar/blue") == 0){
+	}else if(strcmp(topic, "gateaway/status") == 0){
 		ret = MQTT_TOPIC_LED_BLUE;
-	}else if(strcmp(topic, "busrayar/red") == 0){
+	}else if(strcmp(topic, "gateaway/settings") == 0){
 		ret = MQTT_TOPIC_LED_RED;
 	}
 
@@ -322,16 +322,16 @@ static MQTTStatus_t mqttSubscribeTopic( MQTTContext_t * pMqttContext )
     memset( ( void * ) &xMQTTSubscription, 0x00, sizeof( xMQTTSubscription ) );
 
     xMQTTSubscription[0].qos = MQTTQoS0;
-    xMQTTSubscription[0].pTopicFilter = mqttGREENLedTOPIC;
-    xMQTTSubscription[0].topicFilterLength = strlen( mqttGREENLedTOPIC );
+    xMQTTSubscription[0].pTopicFilter = mqtt_GATEAWAY_COMMAND;
+    xMQTTSubscription[0].topicFilterLength = strlen( mqtt_GATEAWAY_COMMAND );
 
     xMQTTSubscription[1].qos = MQTTQoS0;
-    xMQTTSubscription[1].pTopicFilter = mqttBLUELedTOPIC;
-    xMQTTSubscription[1].topicFilterLength = strlen( mqttBLUELedTOPIC );
+    xMQTTSubscription[1].pTopicFilter = mqtt_GATEAWAY_STATUS;
+    xMQTTSubscription[1].topicFilterLength = strlen( mqtt_GATEAWAY_STATUS );
 
     xMQTTSubscription[2].qos = MQTTQoS0;
-    xMQTTSubscription[2].pTopicFilter = mqttREDLedTOPIC;
-    xMQTTSubscription[2].topicFilterLength = strlen( mqttREDLedTOPIC );
+    xMQTTSubscription[2].pTopicFilter = mqtt_GATEAWAY_CAN;
+    xMQTTSubscription[2].topicFilterLength = strlen( mqtt_GATEAWAY_CAN );
 
     do {
     	uint16_t packetId = MQTT_GetPacketId(pMqttContext);
