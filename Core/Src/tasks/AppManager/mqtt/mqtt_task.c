@@ -9,6 +9,7 @@
 #include "core_mqtt.h"
 #include "core_mqtt_config.h"
 #include "../Src/app_config.h"
+#include "canTask.h"
 
 
 F_TCP_UDP_Handler_t xHandler;
@@ -245,11 +246,14 @@ void vMQTTTask( void * pvParameters )
 
 				switch (queueRxMsg.topic)
 				{
-					case MQTT_TOPIC_LED_GREEN:
+					case MQTT_TOPIC_CAN_CMD_SEND:
 						//PA5 is a green led for user
 						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0,  GPIO_PIN_SET);
 						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
 						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_RESET);
+
+						CAN_RX_IRQHandler();
+
 						break;
 					case MQTT_TOPIC_LED_BLUE:
 						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_SET);
@@ -299,7 +303,7 @@ mqtt_topic_t GetTopicId(const char *topic)
 	mqtt_topic_t ret = MQTT_TOPIC_UNKNOWN;
 
 	if(strcmp(topic, "gateaway/cmd") == 0){
-		ret = MQTT_TOPIC_LED_GREEN;
+		ret = MQTT_TOPIC_CAN_CMD_SEND;
 	}else if(strcmp(topic, "gateaway/status") == 0){
 		ret = MQTT_TOPIC_LED_BLUE;
 	}else if(strcmp(topic, "gateaway/settings") == 0){

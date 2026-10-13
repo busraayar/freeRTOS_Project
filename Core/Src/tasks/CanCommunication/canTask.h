@@ -8,6 +8,9 @@
 #ifndef SRC_TASKS_CANCOMMUNICATION_CANTASK_H_
 #define SRC_TASKS_CANCOMMUNICATION_CANTASK_H_
 
+#include "rtos.h"
+
 void CanTaskCreate( TaskAppQueues_s* pTaskQueues );
+void CAN_RX_IRQHandler(void);
 
 #endif /* SRC_TASKS_CANCOMMUNICATION_CANTASK_H_ */
