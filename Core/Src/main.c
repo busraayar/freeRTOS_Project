@@ -124,8 +124,8 @@ int main(void)
   vStartNetwork();
   vTCPInitializeTask(&TaskQueues);
   AppTaskCreate();
-  vTaskStartScheduler();
   CanTaskCreate(&TaskQueues);
+  vTaskStartScheduler();
 
   /* USER CODE END 2 */
 
@@ -232,6 +232,7 @@ void MPU_Config(void)
   * @note   This function is called  when TIM6 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
   * a global variable "uwTick" used as application time base.
+  *
   * @param  htim : TIM handle
   * @retval None
   */

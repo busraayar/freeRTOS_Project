@@ -22,7 +22,6 @@
 #include "stm32f7xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "tasks/CanCommunication/canTask.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

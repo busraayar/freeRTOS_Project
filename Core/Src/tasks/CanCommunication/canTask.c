@@ -9,9 +9,6 @@
  * CAN TASK CREATE
  *
  */
-CAN_TxHeaderTypeDef pxTxHeader;
-CAN_RxHeaderTypeDef pxRxHeader;
-
 TaskHandle_t CanTaskHandle = NULL;
 static TaskAppQueues_s* TaskQueuesPtr = UNDEFINED_PTR;
 extern CAN_HandleTypeDef hcan1;
@@ -22,26 +19,31 @@ static void canTaskFunc( void * pvParameters )
     /* The parameter value is expected to be 1 as 1 is passed in the
        pvParameters value in the call to xTaskCreate() below. */
 
-    configASSERT( ( ( uint32_t ) pvParameters ) == 1 );
+//    configASSERT( pvParameters != NULL );
+    CAN_RxHeaderTypeDef pxRxHeader;
+    uint8_t pReceiveData[8] = {0};
 
-    uint8_t pRxData[8] = {0};
+    HAL_StatusTypeDef status;
 
-    pxTxHeader.StdId					= 0x123;
-    pxTxHeader.ExtId					= 0x000;
-    pxTxHeader.IDE						= CAN_ID_STD;
-    pxTxHeader.RTR						= CAN_RTR_DATA;
-    pxTxHeader.DLC						= 8u;
-    pxTxHeader.TransmitGlobalTime		= DISABLE;
+    status = HAL_CAN_Start(&hcan1);
+
+    if(status != HAL_OK){
+//		ERROR
+    }
+
 
     for( ;; )
     {
+    	if( !HAL_CAN_GetRxFifoFillLevel(&hcan1, CAN_RX_FIFO0) ) ;
         /* Task code goes here. */
-    	if( HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &pxRxHeader, pRxData) == HAL_OK )
+    	if( HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &pxRxHeader, pReceiveData) == HAL_OK )
     	{
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_SET);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_SET);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
     	}
+
+        vTaskDelay(pdMS_TO_TICKS(10));
 
 //    	CAN_SEND
 //    	HAL_CAN_AddTxMessage()
@@ -49,24 +51,30 @@ static void canTaskFunc( void * pvParameters )
     }
 }
 
-void CAN_RX_IRQHandler(void)
-{
-    uint8_t pTxData[8] = {0xDE, 0xAD, 0xBE, 0xEF, 0x01, 0x02, 0x03, 0x04};
-    uint32_t TxMailbox = CAN_TX_MAILBOX0;
 
+void CAN_Send(void)
+{
+	CAN_TxHeaderTypeDef pxTxHeader;
+
+    uint8_t pTxData[8] = {0xDE, 0xAD, 0xBE, 0xEF, 0x01, 0x02, 0x03, 0x04};
+
+    pxTxHeader.DLC						= 8u;
     pxTxHeader.StdId					= 0xCCA;
-    pxTxHeader.ExtId					= 0x000;
     pxTxHeader.IDE						= CAN_ID_STD;
     pxTxHeader.RTR						= CAN_RTR_DATA;
-    pxTxHeader.DLC						= 8u;
+    pxTxHeader.ExtId					= 0x000;
     pxTxHeader.TransmitGlobalTime		= DISABLE;
+
+    uint32_t TxMailbox;
 
 	if(HAL_CAN_AddTxMessage(&hcan1, &pxTxHeader, pTxData, &TxMailbox) != HAL_OK) {
 //	ERROR
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
 	}
 
-	vTaskDelay(pdMS_TO_TICKS(10));
+	while( HAL_CAN_IsTxMessagePending(&hcan1, TxMailbox) );
+
+	return;
 }
 
 void CanTaskCreate(  TaskAppQueues_s* pTaskQueues ){

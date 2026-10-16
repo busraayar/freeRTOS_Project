@@ -157,7 +157,7 @@ void vMQTTTask( void * pvParameters )
     for( ;; )
     {
         Socket_t xSocket = prvTcpConnect();
-        if( xSocket == NULL )
+        if( xSocket == FREERTOS_INVALID_SOCKET )
         {
             printf( "TCP connection error\r\n" );
             vTaskDelay( pdMS_TO_TICKS( 5000 ) );
@@ -177,6 +177,7 @@ void vMQTTTask( void * pvParameters )
 	{
 		FreeRTOS_closesocket( xSocket );
 		vTaskDelay( pdMS_TO_TICKS( 5000 ) );
+		continue;
 	}
 
 	MQTTConnectInfo_t xConnect = { 0 };
@@ -194,21 +195,29 @@ void vMQTTTask( void * pvParameters )
 			FreeRTOS_closesocket( xSocket );
 			xSocket = FREERTOS_INVALID_SOCKET;
 			vTaskDelay( pdMS_TO_TICKS( 5000 ) );
+			continue;
 		}
 
 		printf( "MQTT CONNECTED!\r\n" );
 
 		TickType_t xLastPublish = xTaskGetTickCount();
 
+		static MQTTStatus_t stat = MQTTSuccess;
+
+		stat = mqttSubscribeTopic(&xMqttCtx);
+
+		if(stat != MQTTSuccess){
+		    printf("Subscribe failed: %d\r\n", (int)stat);
+
+		    FreeRTOS_closesocket(xSocket);
+		    xSocket = FREERTOS_INVALID_SOCKET;
+
+		    vTaskDelay(pdMS_TO_TICKS(5000));
+		    continue;
+		}
+
 		for( ;; )
 		{
-			static MQTTStatus_t stat = MQTTSuccess;
-
-			stat = mqttSubscribeTopic(&xMqttCtx);
-			if(stat != MQTTSuccess){
-				printf("Subscribe Islemi Basarisiz!!!");
-			}
-
 			stat = MQTT_ProcessLoop( &xMqttCtx );
 			if( stat == MQTTNeedMoreBytes){
 
@@ -252,7 +261,7 @@ void vMQTTTask( void * pvParameters )
 						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
 						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_RESET);
 
-						CAN_RX_IRQHandler();
+						CAN_Send();
 
 						break;
 					case MQTT_TOPIC_LED_BLUE:
