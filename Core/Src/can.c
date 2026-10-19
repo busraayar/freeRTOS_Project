@@ -80,8 +80,20 @@ void MX_CAN1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN CAN1_Init 2 */
+  HAL_StatusTypeDef status;
+  status = HAL_CAN_ConfigFilter(&hcan1, sFilterConfigFIFO0);
+  if(status != HAL_OK)
+  {
+	  Error_Handler();
+  }
 
-  HAL_CAN_ConfigFilter(&hcan1, sFilterConfigFIFO0);
+  status = HAL_CAN_Start(&hcan1);
+
+  if(status != HAL_OK){
+	  Error_Handler();
+  }
+
+
   /* USER CODE END CAN1_Init 2 */
 
 }

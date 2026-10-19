@@ -25,13 +25,6 @@ static void canTaskFunc( void * pvParameters )
 
     HAL_StatusTypeDef status;
 
-    status = HAL_CAN_Start(&hcan1);
-
-    if(status != HAL_OK){
-//		ERROR
-    }
-
-
     for( ;; )
     {
     	if( !HAL_CAN_GetRxFifoFillLevel(&hcan1, CAN_RX_FIFO0) ) ;
@@ -67,7 +60,10 @@ void CAN_Send(void)
 
     uint32_t TxMailbox;
 
-	if(HAL_CAN_AddTxMessage(&hcan1, &pxTxHeader, pTxData, &TxMailbox) != HAL_OK) {
+    HAL_StatusTypeDef status;
+    status = HAL_CAN_AddTxMessage(&hcan1, &pxTxHeader, pTxData, &TxMailbox);
+
+	if(status != HAL_OK) {
 //	ERROR
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
 	}
