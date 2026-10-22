@@ -37,6 +37,7 @@
 #endif
 
 #define TCP_CONNECTION_TIMEOUT_TICK				( 5000/portTICK_PERIOD_MS )
+#define CAN_CONNECTION_TIMEOUT_TICK				( 5/portTICK_PERIOD_MS )
 #define MQTT_TASK_QUEUE_RECEIVE_TIMEOUT_MS		( 5/portTICK_PERIOD_MS )
 
 #define TASK_QUEUE_LENGTH_MQTT						24
@@ -47,5 +48,11 @@ typedef struct {
 	QueueHandle_t mqttTaskQueue;
 	QueueHandle_t canTaskQueue;
 }TaskAppQueues_s;
+
+typedef struct{
+	uint32_t msg_id;
+	uint8_t data_len;
+	uint8_t data[16];
+}TaskQueueMsg_s;
 
 #endif /* INC_RTOS_H_ */

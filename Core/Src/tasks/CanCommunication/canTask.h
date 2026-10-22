@@ -11,6 +11,5 @@
 #include "rtos.h"
 
 void CanTaskCreate( TaskAppQueues_s* pTaskQueues );
-void CAN_Send(void);
 
 #endif /* SRC_TASKS_CANCOMMUNICATION_CANTASK_H_ */

@@ -21,32 +21,7 @@
 #include "can.h"
 
 /* USER CODE BEGIN 0 */
-const CAN_FilterTypeDef sFilterConfigFIFO0[16] = {
-	  {
-		  .FilterActivation 	= CAN_FILTER_ENABLE,
-		  .FilterBank 			= 0,
-		  .FilterFIFOAssignment = CAN_FILTER_FIFO0,
-		  .FilterScale			= CAN_FILTERSCALE_16BIT,
-		  .FilterMode			= CAN_FILTERMODE_IDMASK,
-		  .SlaveStartFilterBank	= 28u,
-		  .FilterIdHigh 		= (0x0100 << 5),
-		  .FilterIdLow 			= (0x0201 << 5),
-		  .FilterMaskIdHigh 	= (0x0FF0 << 5), // [0x0100 - 0x0109] aralığındaki mesajları kabul eder
-		  .FilterMaskIdLow 		= (0x0FFF << 5), // 0x0201 mesajını kabul eder
-	  },
-	  {
-		  .FilterActivation 	= CAN_FILTER_ENABLE,
-		  .FilterBank 			= 1,
-		  .FilterFIFOAssignment = CAN_FILTER_FIFO0,
-		  .FilterScale			= CAN_FILTERSCALE_16BIT,
-		  .FilterMode			= CAN_FILTERMODE_IDLIST,
-		  .SlaveStartFilterBank	= 28u,
-		  .FilterIdHigh 		= (0x0CCA << 5),
-		  .FilterIdLow 			= (0x0889 << 5),
-		  .FilterMaskIdHigh 	= (0x0001 << 5), // IDLIST old için mask lar da filter görevi görür
-		  .FilterMaskIdLow 		= (0x004C << 5),
-	  }
-};
+static void CAN1_RX_EnablePullUp(void);
 /* USER CODE END 0 */
 
 CAN_HandleTypeDef hcan1;
@@ -67,8 +42,8 @@ void MX_CAN1_Init(void)
   hcan1.Init.Prescaler = 32;
   hcan1.Init.Mode = CAN_MODE_LOOPBACK;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_1TQ;
-  hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_13TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_4TQ;
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = DISABLE;
   hcan1.Init.AutoWakeUp = DISABLE;
@@ -80,20 +55,41 @@ void MX_CAN1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN CAN1_Init 2 */
-  HAL_StatusTypeDef status;
-  status = HAL_CAN_ConfigFilter(&hcan1, sFilterConfigFIFO0);
-  if(status != HAL_OK)
-  {
-	  Error_Handler();
-  }
 
-  status = HAL_CAN_Start(&hcan1);
+  /* USER CODE BEGIN CAN1_Init 2 */
+  	CAN1_RX_EnablePullUp();
 
-  if(status != HAL_OK){
-	  Error_Handler();
-  }
+  	HAL_StatusTypeDef status;
+    CAN_FilterTypeDef filter;
 
+    filter.FilterBank = 0;
+    filter.FilterMode = CAN_FILTERMODE_IDMASK;
+    filter.FilterScale = CAN_FILTERSCALE_32BIT;
+    filter.FilterIdHigh = 0x0000;
+    filter.FilterIdLow = 0x0000;
+    filter.FilterMaskIdHigh = 0x0000;
+    filter.FilterMaskIdLow = 0x0000;
+    filter.FilterFIFOAssignment = CAN_FILTER_FIFO0;
+    filter.FilterActivation = CAN_FILTER_ENABLE;
 
+    status = HAL_CAN_ConfigFilter(&hcan1, &filter);
+    if (status != HAL_OK) {
+        while(1);
+    }
+
+    HAL_CAN_StateTypeDef state;
+    state = HAL_CAN_GetState(&hcan1);
+
+    status = HAL_CAN_Start(&hcan1);
+    if (status != HAL_OK) {
+        uint32_t errCd = HAL_CAN_GetError(&hcan1);
+        while(1);
+    }
+
+    status = HAL_CAN_ActivateNotification(&hcan1, CAN_IT_TX_MAILBOX_EMPTY | CAN_IT_RX_FIFO0_MSG_PENDING);
+    if (status != HAL_OK) {
+        while(1);
+    }
   /* USER CODE END CAN1_Init 2 */
 
 }
@@ -160,6 +156,19 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* canHandle)
 }
 
 /* USER CODE BEGIN 1 */
+static void CAN1_RX_EnablePullUp(void)
+{
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
 
+    __HAL_RCC_GPIOD_CLK_ENABLE();
+
+    GPIO_InitStruct.Pin       = GPIO_PIN_0;
+    GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull      = GPIO_PULLUP;
+    GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;
+
+    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+}
 /* USER CODE END 1 */
 

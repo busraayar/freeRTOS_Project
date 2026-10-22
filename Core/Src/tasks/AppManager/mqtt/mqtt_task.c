@@ -261,7 +261,13 @@ void vMQTTTask( void * pvParameters )
 						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
 						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_RESET);
 
-						CAN_Send();
+			        	MqttMessage_s mqttTxMessage = {0};
+
+			        	mqttTxMessage.topic = MQTT_TOPIC_CAN_CMD_SEND;
+			        	mqttTxMessage.payloadLength = sizeof(mqttTxMessage);
+			        	memset(mqttTxMessage.payload, 0, mqttTxMessage.payloadLength);
+
+			        	xQueueSend(TaskQueuesPtr->canTaskQueue, &mqttTxMessage, 0);
 
 						break;
 					case MQTT_TOPIC_LED_BLUE:

@@ -24,18 +24,18 @@ static void AppTaskFunction( void * pvParameters ){
 
 void AppTaskCreate( void ){
 
-	BaseType_t xReturned;
-
-	xReturned = xTaskCreate(
-			AppTaskFunction,
-			"APP TASK",
-			APP_TASK_STACK_SIZE,
-			( void * )1,
-			APP_TASK_PRIORITY,
-			&AppTaskHandle);
-
-	if( xReturned == pdPASS ){
-		//task created success
-	}
+//	BaseType_t xReturned;
+//
+//	xReturned = xTaskCreate(
+//			AppTaskFunction,
+//			"APP TASK",
+//			APP_TASK_STACK_SIZE,
+//			( void * )1,
+//			APP_TASK_PRIORITY,
+//			&AppTaskHandle);
+//
+//	if( xReturned == pdPASS ){
+//		//task created success
+//	}
 
 }
