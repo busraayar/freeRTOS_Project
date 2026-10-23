@@ -22,35 +22,38 @@ static void canTaskFunc( void * pvParameters )
     /* The parameter value is expected to be 1 as 1 is passed in the
        pvParameters value in the call to xTaskCreate() below. */
 
-    MqttMessage_s queueRxMsg;
-    MqttMessage_s queueTxMsg = { .topic = MQTT_TOPIC_LED_BLUE };
+    AppMessage_t queueRxMsg;
     CAN_RxHeaderTypeDef rxHeader;
     uint8_t rxData[8];
-    CAN_RxHeaderTypeDef pxRxHeader;
-    uint8_t pReceiveData[8] = {0};
 
     for( ;; )
     {
     	if(xQueueReceive(TaskQueuesPtr->canTaskQueue, &queueRxMsg, CAN_CONNECTION_TIMEOUT_TICK)){
-    		switch(queueRxMsg.topic){
-    		case MQTT_TOPIC_CAN_CMD_SEND:
-    			CAN_Send();
-    		case MQTT_TOPIC_CAN_CMD_SEND:
+    		switch(queueRxMsg.FrameId){
+    		case MQTT_SUBS_MSG_RCV:
     		{
-    			switch(rxData.){
-    			case:
-    			{
+    			MqttMessage_s* mqttReceivedMsg = (MqttMessage_s*)queueRxMsg.Data;
 
-    			}
-    			}
-    			break;
+    			switch (mqttReceivedMsg->topic) {
+					case MQTT_TOPIC_CAN_CMD_SEND:
+//						do something
+						CAN_Send();
+
+						break;
+					default:
+						break;
+				}
     		}
+    		case CAN_MSG_RECEIVED:
+    			break;
+    		case MQTT_PUBL_MSG_SEND:
+    			break;
     		default:
     			break;
     		}
     	}
 
-		if(HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &rxHeader, rxData) == HAL_OK)
+		if( HAL_CAN_GetRxFifoFillLevel( &hcan1, CAN_TX_MAILBOX0 ) )
 		{
 			/* means that there is no ongoing transfer, call Receive */
 			HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &rxHeader, rxData);
@@ -59,8 +62,10 @@ static void canTaskFunc( void * pvParameters )
 }
 
 void HAL_CAN_RxFIFO0MsgPendingCallback(){
-    CAN_RxHeaderTypeDef rxHeader;
+
+	CAN_RxHeaderTypeDef rxHeader;
     uint8_t rxData[8];
+    AppMessage_t canMsg = {0};
 
     if (HAL_CAN_GetRxMessage(
             &hcan1,
@@ -71,6 +76,12 @@ void HAL_CAN_RxFIFO0MsgPendingCallback(){
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+
+		canMsg.FrameId = CAN_MSG_RECEIVED;
+		memcpy(&canMsg.Data, &rxData, sizeof(rxData));
+
+		xQueueSend(TaskQueuesPtr->canTaskQueue, &canMsg, CAN_CONNECTION_TIMEOUT_TICK);
+
         /* message received */
     }
 }

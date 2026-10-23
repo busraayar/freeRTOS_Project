@@ -27,9 +27,8 @@ F_TCP_UDP_Handler_t xHandler;
 static uint8_t ucNetworkBuffer[ 1024 ];
 static TaskAppQueues_s* TaskQueuesPtr = UNDEFINED_PTR;
 static TaskHandle_t TcpTaskHandle = UNDEFINED_PTR;
-static TaskHandle_t canTaskHandle = UNDEFINED_PTR;
-
-mqtt_topic_t GetTopicId(const char *topic);
+<
+static mqtt_topic_t GetTopicId(const char *topic, uint16_t topicLength);
 static MQTTStatus_t mqttSubscribeTopic( MQTTContext_t * pMqttContext );
 static void mqttEventCallback( MQTTContext_t * pMqttContext,
                               MQTTPacketInfo_t * pPacketInfo,
@@ -37,19 +36,6 @@ static void mqttEventCallback( MQTTContext_t * pMqttContext,
 uint32_t prvGetTimeMs( void )
 {
     return ( uint32_t ) ( xTaskGetTickCount() * portTICK_PERIOD_MS );
-}
-
-static void prvEventCallback( MQTTContext_t * pContext,
-                              MQTTPacketInfo_t * pPacketInfo,
-                              MQTTDeserializedInfo_t * pDeserializedInfo )
-{
-    ( void ) pContext;
-    ( void ) pDeserializedInfo;
-
-    if( ( pPacketInfo->type & 0xF0U ) == MQTT_PACKET_TYPE_PUBLISH )
-    {
-        printf( "Gelen MQTT mesaji var!\r\n" );
-    }
 }
 
 static int32_t prvTransportSend( NetworkContext_t * pCtx,
@@ -261,13 +247,13 @@ void vMQTTTask( void * pvParameters )
 						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
 						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_RESET);
 
-			        	MqttMessage_s mqttTxMessage = {0};
+						AppMessage_t appTxMessage = {0};
 
-			        	mqttTxMessage.topic = MQTT_TOPIC_CAN_CMD_SEND;
-			        	mqttTxMessage.payloadLength = sizeof(mqttTxMessage);
-			        	memset(mqttTxMessage.payload, 0, mqttTxMessage.payloadLength);
+						appTxMessage.FrameId = MQTT_SUBS_MSG_RCV;
+			        	memcpy(&appTxMessage.Data, &queueRxMsg, sizeof(MqttMessage_s));
+						appTxMessage.Length = sizeof(appTxMessage.Data);
 
-			        	xQueueSend(TaskQueuesPtr->canTaskQueue, &mqttTxMessage, 0);
+			        	xQueueSend(TaskQueuesPtr->canTaskQueue, &appTxMessage, 0);
 
 						break;
 					case MQTT_TOPIC_LED_BLUE:
@@ -313,21 +299,35 @@ void vTCPInitializeTask( TaskAppQueues_s* pTaskQueues ){
     }
 }
 
-mqtt_topic_t GetTopicId(const char *topic)
+static mqtt_topic_t GetTopicId(const char *topic,
+                               uint16_t topicLength)
 {
-	mqtt_topic_t ret = MQTT_TOPIC_UNKNOWN;
+    if ((topicLength == strlen(mqtt_GATEAWAY_COMMAND)) &&
+        (memcmp(topic,
+                mqtt_GATEAWAY_COMMAND,
+                topicLength) == 0))
+    {
+        return MQTT_TOPIC_CAN_CMD_SEND;
+    }
 
-	if(strcmp(topic, "gateaway/cmd") == 0){
-		ret = MQTT_TOPIC_CAN_CMD_SEND;
-	}else if(strcmp(topic, "gateaway/status") == 0){
-		ret = MQTT_TOPIC_LED_BLUE;
-	}else if(strcmp(topic, "gateaway/settings") == 0){
-		ret = MQTT_TOPIC_LED_RED;
-	}
+    if ((topicLength == strlen(mqtt_GATEAWAY_STATUS)) &&
+        (memcmp(topic,
+                mqtt_GATEAWAY_STATUS,
+                topicLength) == 0))
+    {
+        return MQTT_TOPIC_LED_BLUE;
+    }
 
-	return ret;
+    if ((topicLength == strlen(mqtt_GATEAWAY_CAN)) &&
+        (memcmp(topic,
+                mqtt_GATEAWAY_CAN,
+                topicLength) == 0))
+    {
+        return MQTT_TOPIC_LED_RED;
+    }
+
+    return MQTT_TOPIC_UNKNOWN;
 }
-
 
 static MQTTStatus_t mqttSubscribeTopic( MQTTContext_t * pMqttContext )
 {
@@ -388,14 +388,21 @@ static void mqttEventCallback( MQTTContext_t * pMqttContext,
 
         case MQTT_PACKET_TYPE_PUBLISH:
         {
-        	mqtt_topic_t topicID;
-        	topicID = GetTopicId(pDeserializedInfo->pPublishInfo->pTopicName);
+        	const MQTTPublishInfo_t *publishInfo = pDeserializedInfo->pPublishInfo;
+
+        	mqtt_topic_t topicID = GetTopicId( publishInfo->pTopicName, publishInfo->topicNameLength );
 
         	MqttMessage_s mqttRxMessage = {0};
+        	size_t payloadLength = publishInfo->payloadLength;
+
+        	if (payloadLength > sizeof(mqttRxMessage.payload))
+        	{
+        	    payloadLength = sizeof(mqttRxMessage.payload);
+        	}
 
         	mqttRxMessage.topic = topicID;
-        	mqttRxMessage.payloadLength = pDeserializedInfo->pPublishInfo->payloadLength;
-        	memcpy(mqttRxMessage.payload, pDeserializedInfo->pPublishInfo->pPayload, mqttRxMessage.payloadLength);
+        	mqttRxMessage.payloadLength = payloadLength;
+        	memcpy(mqttRxMessage.payload, publishInfo->pPayload, mqttRxMessage.payloadLength);
 
         	xQueueSend(TaskQueuesPtr->mqttTaskQueue, &mqttRxMessage, 0);
 

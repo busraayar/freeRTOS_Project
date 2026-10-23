@@ -13,6 +13,12 @@
 
 #define MAX_MQTT_MSG_LENGTH							64
 
+typedef enum{
+	MQTT_SUBS_MSG_RCV = 0,
+	MQTT_PUBL_MSG_SEND,
+	CAN_MSG_RECEIVED,
+}canMessageFrameId;
+
 typedef struct
 {
 	mqtt_topic_t topic;
