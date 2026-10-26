@@ -82,7 +82,6 @@ void MX_CAN1_Init(void)
 
     status = HAL_CAN_Start(&hcan1);
     if (status != HAL_OK) {
-        uint32_t errCd = HAL_CAN_GetError(&hcan1);
         while(1);
     }
 

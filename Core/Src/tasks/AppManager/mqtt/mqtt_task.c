@@ -27,7 +27,7 @@ F_TCP_UDP_Handler_t xHandler;
 static uint8_t ucNetworkBuffer[ 1024 ];
 static TaskAppQueues_s* TaskQueuesPtr = UNDEFINED_PTR;
 static TaskHandle_t TcpTaskHandle = UNDEFINED_PTR;
-<
+
 static mqtt_topic_t GetTopicId(const char *topic, uint16_t topicLength);
 static MQTTStatus_t mqttSubscribeTopic( MQTTContext_t * pMqttContext );
 static void mqttEventCallback( MQTTContext_t * pMqttContext,
