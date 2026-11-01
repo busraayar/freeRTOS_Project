@@ -14,8 +14,17 @@ typedef enum
     MQTT_SUBS_MSG_RCV = 0,
     MQTT_PUBL_MSG_SEND,
     CAN_MSG_RECEIVED
-} canMessageFrameId;
+} AppMessageType;
 
+//36 byte
+typedef struct
+{
+    uint32_t canId;
+    uint8_t dataLen;
+    uint8_t data[8];
+} CanMessage_s;
+
+//67 byte
 typedef struct
 {
     mqtt_topic_t topic;
@@ -23,11 +32,16 @@ typedef struct
     uint16_t payloadLength;
 } MqttMessage_s;
 
+
 typedef struct
 {
-    uint32_t FrameId;
-    uint8_t Length;
-    uint8_t Data[8];
+	AppMessageType TypeId;
+
+    union{
+        MqttMessage_s mqttMsg;
+        CanMessage_s canMsg;
+    };
+
 } AppMessage_t;
 
 #endif /* SRC_APP_CONFIG_H_ */

@@ -44,6 +44,8 @@
 #define TASK_QUEUE_LENGTH_CAN						24
 #define MAX_QUEUE_MSG_LEN_IN_BYTES					24
 
+void configureInetrrupt();
+
 typedef struct {
 	QueueHandle_t mqttTaskQueue;
 	QueueHandle_t canTaskQueue;

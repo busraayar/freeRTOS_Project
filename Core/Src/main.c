@@ -66,7 +66,6 @@ static void MPU_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
 /* USER CODE END 0 */
 
 /**
@@ -125,6 +124,8 @@ int main(void)
   vTCPInitializeTask(&TaskQueues);
   AppTaskCreate();
   CanTaskCreate(&TaskQueues);
+
+  configureInetrrupt();
   vTaskStartScheduler();
 
   /* USER CODE END 2 */

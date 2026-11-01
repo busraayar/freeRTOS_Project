@@ -249,9 +249,8 @@ void vMQTTTask( void * pvParameters )
 
 						AppMessage_t appTxMessage = {0};
 
-						appTxMessage.FrameId = MQTT_SUBS_MSG_RCV;
-			        	memcpy(&appTxMessage.Data, &queueRxMsg, sizeof(MqttMessage_s));
-						appTxMessage.Length = sizeof(appTxMessage.Data);
+						appTxMessage.TypeId = MQTT_SUBS_MSG_RCV;
+			        	memcpy(&appTxMessage.mqttMsg, &queueRxMsg, sizeof(MqttMessage_s));
 
 			        	xQueueSend(TaskQueuesPtr->canTaskQueue, &appTxMessage, 0);
 

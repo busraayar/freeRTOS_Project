@@ -13,13 +13,12 @@
 TaskHandle_t CanTaskHandle = NULL;
 static TaskAppQueues_s* TaskQueuesPtr = UNDEFINED_PTR;
 CAN_TxHeaderTypeDef   TxHeader;
-CAN_RxHeaderTypeDef   RxHeader;
 uint8_t               TxData[8];
-uint8_t               RxData[8];
 uint32_t              TxMailbox;
 extern CAN_HandleTypeDef hcan1;
+uint8_t rxData[8];
 
-void CAN_Send(void);
+void CAN_Send(CanMessage_s* data);
 
 static void canTaskFunc( void * pvParameters )
 {
@@ -28,44 +27,62 @@ static void canTaskFunc( void * pvParameters )
        pvParameters value in the call to xTaskCreate() below. */
 
     AppMessage_t queueRxMsg;
-    CAN_RxHeaderTypeDef rxHeader;
-    uint8_t rxData[8];
 
     for( ;; )
     {
     	if(xQueueReceive(TaskQueuesPtr->canTaskQueue, &queueRxMsg, CAN_CONNECTION_TIMEOUT_TICK)){
-    		switch(queueRxMsg.FrameId){
+    		switch(queueRxMsg.TypeId){
     		case MQTT_SUBS_MSG_RCV:
     		{
-    			MqttMessage_s* mqttReceivedMsg = (MqttMessage_s*)queueRxMsg.Data;
+    			MqttMessage_s* mqttReceivedMsg = &queueRxMsg.mqttMsg;
 
     			switch (mqttReceivedMsg->topic) {
 					case MQTT_TOPIC_CAN_CMD_SEND:
 //						do something
-						CAN_Send();
+						CanMessage_s canMsg = {0};
+
+						canMsg.canId = 0x100;
+						canMsg.dataLen = mqttReceivedMsg->payloadLength;
+
+						if(canMsg.dataLen > 8)
+						{
+						    canMsg.dataLen = 8;
+						}
+
+						memcpy(canMsg.data,
+						       mqttReceivedMsg->payload,
+						       canMsg.dataLen);
+
+						CAN_Send(&canMsg);
 
 						break;
 					default:
 						break;
 				}
+    			break;
     		}
     		case CAN_MSG_RECEIVED:
     		{
-    			switch (rxHeader.StdId) {
-					case 0x011:
+    			CanMessage_s* canReceivedMsg = &queueRxMsg.canMsg;
+
+				switch (canReceivedMsg->canId) {
+					case 0x100:
 						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_SET);
 						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_SET);
-						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
 						break;
 					case 0x111:
 						break;
 					case 0x002:
 						break;
 					default:
-						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_RESET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_RESET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
 						break;
 				}
-    			break;
+				break;
+
     		}
     		case MQTT_PUBL_MSG_SEND:
     			break;
@@ -73,67 +90,58 @@ static void canTaskFunc( void * pvParameters )
     			break;
     		}
     	}
-
-		if( HAL_CAN_GetRxFifoFillLevel( &hcan1, CAN_RX_FIFO0 ) )
-		{
-			/* means that there is no ongoing transfer, call Receive */
-			HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &RxHeader, RxData);
-		    AppMessage_t canMsg = {0};
-			canMsg.FrameId = CAN_MSG_RECEIVED;
-
-			memcpy(&canMsg.Data, &RxData, sizeof(RxData));
-
-			xQueueSend(TaskQueuesPtr->canTaskQueue, &canMsg, CAN_CONNECTION_TIMEOUT_TICK);
-
-		}
     }
 }
 
-//void HAL_CAN_RxFIFO0MsgPendingCallback(){
-//
-//	CAN_RxHeaderTypeDef rxHeader;
-//    uint8_t rxData[8];
-//    AppMessage_t canMsg = {0};
-//
-//    if (HAL_CAN_GetRxMessage(
-//            &hcan1,
-//            CAN_RX_FIFO0,
-//            &rxHeader,
-//            rxData) == HAL_OK)
-//    {
-//		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_SET);
-//		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_SET);
-//		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
-//
-//		canMsg.FrameId = CAN_MSG_RECEIVED;
-//		memcpy(&canMsg.Data, &rxData, sizeof(rxData));
-//
-//		xQueueSend(TaskQueuesPtr->canTaskQueue, &canMsg, CAN_CONNECTION_TIMEOUT_TICK);
-//
-//        /* message received */
-//    }
-//}
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan){
 
-void CAN_Send(void)
+	CAN_RxHeaderTypeDef rxHeader;
+    AppMessage_t canMsg = {0};
+    uint8_t rxData[8];
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+    if (HAL_CAN_GetRxMessage(
+            &hcan1,
+            CAN_RX_FIFO0,
+            &rxHeader,
+            rxData) == HAL_OK)
+    {
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+
+		canMsg.TypeId = CAN_MSG_RECEIVED;
+
+		memcpy(&canMsg.canMsg.data, &rxData, sizeof(rxData));
+		canMsg.canMsg.canId = rxHeader.StdId;
+		canMsg.canMsg.dataLen = rxHeader.DLC;
+
+//		xQueueSend(TaskQueuesPtr->canTaskQueue, &canMsg, CAN_CONNECTION_TIMEOUT_TICK);
+
+        xQueueSendFromISR( TaskQueuesPtr->canTaskQueue, &canMsg, &xHigherPriorityTaskWoken);
+
+		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+
+        /* message received */
+    }
+}
+
+void CAN_Send(CanMessage_s* data)
 {
 
-    TxHeader.StdId 				= 0x11;
+    TxHeader.StdId 				= data->canId;
     TxHeader.RTR 				= CAN_RTR_DATA;
     TxHeader.IDE 				= CAN_ID_STD;
-    TxHeader.DLC 				= 2;
+    TxHeader.DLC 				= data->dataLen;
     TxHeader.TransmitGlobalTime = DISABLE;
-    TxData[0] 					= 0xCA;
-    TxData[1] 					= 0xFE;
+    memcpy(TxData, data->data, data->dataLen);
 
-    /* Request transmission */
     if(HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) != HAL_OK)
-    {
-      /* Transmission request Error */
-//      Error_Handler();
-    }
+	{
+	  /* Transmission request Error */
+	  // İsteğe bağlı hata yönetimi
+	}
 
-    /* Wait transmission complete */
-    while(HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) != 3) {}
 	return;
 }
 

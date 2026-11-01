@@ -63,30 +63,16 @@ void vApplicationIPNetworkEventHook_Multi(eIPCallbackEvent_t eNetworkEvent,
 }
 
 void configureInetrrupt(){
-	uint32_t High_PreemptPriority = 0;
-	uint32_t Low_PreemptPriority = 1;
-	uint32_t WWDG_IRQn_SubPriority = 0;
-	uint32_t CAN1_RX0_IRQn_SubPriority = 1;
-	uint32_t CAN1_RX1_IRQn_SubPriority = 2;
-	uint32_t ETH_IRQn_SubPriority = 3;
-	uint32_t ETH_WKUP_IRQn_SubPriority = 4;
+    HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 5, 0);
+    HAL_NVIC_SetPriority(CAN1_RX1_IRQn, 5, 0);
 
+    HAL_NVIC_SetPriority(ETH_IRQn,      5, 0);
+    HAL_NVIC_SetPriority(ETH_WKUP_IRQn, 5, 0);
 
-	HAL_NVIC_EnableIRQ(WWDG_IRQn);
-	HAL_NVIC_SetPriority(WWDG_IRQn, High_PreemptPriority, WWDG_IRQn_SubPriority);
-
-	HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
-	HAL_NVIC_SetPriority(CAN1_RX0_IRQn, High_PreemptPriority, CAN1_RX0_IRQn_SubPriority);
-
-	HAL_NVIC_EnableIRQ(CAN1_RX1_IRQn);
-	HAL_NVIC_SetPriority(CAN1_RX1_IRQn, High_PreemptPriority, CAN1_RX1_IRQn_SubPriority);
-
-	HAL_NVIC_EnableIRQ(ETH_IRQn);
-	HAL_NVIC_SetPriority(ETH_IRQn, High_PreemptPriority, ETH_IRQn_SubPriority);
-
-	HAL_NVIC_EnableIRQ(ETH_WKUP_IRQn);
-	HAL_NVIC_SetPriority(ETH_WKUP_IRQn, Low_PreemptPriority, ETH_WKUP_IRQn_SubPriority);
-
+    HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
+    HAL_NVIC_EnableIRQ(CAN1_RX1_IRQn);
+    HAL_NVIC_EnableIRQ(ETH_IRQn);
+    HAL_NVIC_EnableIRQ(ETH_WKUP_IRQn);
 }
 
 
