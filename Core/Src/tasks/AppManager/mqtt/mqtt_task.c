@@ -9,8 +9,6 @@
 #include "core_mqtt.h"
 #include "core_mqtt_config.h"
 #include "../Src/app_config.h"
-#include "canTask.h"
-
 
 F_TCP_UDP_Handler_t xHandler;
 
@@ -20,19 +18,26 @@ F_TCP_UDP_Handler_t xHandler;
 #define mqttTOPIC         "gateaway/test"
 
 #define NUMBER_OF_SUBSCRIPTIONS		3
-#define mqtt_GATEAWAY_COMMAND		"gateaway/cmd"
-#define mqtt_GATEAWAY_STATUS		"gateaway/status"
-#define mqtt_GATEAWAY_CAN			"gateaway/settings"
+#define mqtt_GATEAWAY_COMMAND			"gateaway/cmd"
+#define mqtt_GATEAWAY_STATUS			"gateaway/status"
+#define mqtt_GATEAWAY_STATUS_RSP		"gateaway/status/rsp"
+#define mqtt_GATEAWAY_CAN				"gateaway/settings"
+#define mqtt_GATEAWAY_CAN_RSP			"gateaway/settings/rsp"
 
 static uint8_t ucNetworkBuffer[ 1024 ];
 static TaskAppQueues_s* TaskQueuesPtr = UNDEFINED_PTR;
 static TaskHandle_t TcpTaskHandle = UNDEFINED_PTR;
 
 static mqtt_topic_t GetTopicId(const char *topic, uint16_t topicLength);
+static bool MqttPublishFunction( MQTTContext_t xMqttCtx, char* pcPayload, size_t len, const char* topic);
 static MQTTStatus_t mqttSubscribeTopic( MQTTContext_t * pMqttContext );
 static void mqttEventCallback( MQTTContext_t * pMqttContext,
                               MQTTPacketInfo_t * pPacketInfo,
                               MQTTDeserializedInfo_t * pDeserializedInfo );
+
+
+static bool isNeedPublishRsp = false;
+
 uint32_t prvGetTimeMs( void )
 {
     return ( uint32_t ) ( xTaskGetTickCount() * portTICK_PERIOD_MS );
@@ -223,51 +228,83 @@ void vMQTTTask( void * pvParameters )
 									 "{\"tick\": %lu}",
 									 ( unsigned long ) xLastPublish );
 
-				MQTTPublishInfo_t xPub = { 0 };
-				xPub.qos             = MQTTQoS0;
-				xPub.pTopicName      = mqttTOPIC;
-				xPub.topicNameLength = ( uint16_t ) strlen( mqttTOPIC );
-				xPub.pPayload        = pcPayload;
-				xPub.payloadLength   = ( size_t ) iLen;
-
-				if( MQTT_Publish( &xMqttCtx,
-								  &xPub,
-								  0,
-								  NULL ) == MQTTSuccess )
-					printf( "Publish OK\r\n" );
+				MqttPublishFunction(xMqttCtx, pcPayload, iLen, mqttTOPIC);
 			}
+
 			if(xQueueReceive(TaskQueuesPtr->mqttTaskQueue, &queueRxMsg, MQTT_TASK_QUEUE_RECEIVE_TIMEOUT_MS))
 			{
+				AppMessage_t appTxMessage = {0};
 
 				switch (queueRxMsg.topic)
 				{
 					case MQTT_TOPIC_CAN_CMD_SEND:
-						//PA5 is a green led for user
-						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0,  GPIO_PIN_SET);
-						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
-						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_RESET);
-
-						AppMessage_t appTxMessage = {0};
-
+					{
 						appTxMessage.TypeId = MQTT_SUBS_MSG_RCV;
 			        	memcpy(&appTxMessage.mqttMsg, &queueRxMsg, sizeof(MqttMessage_s));
 
 			        	xQueueSend(TaskQueuesPtr->canTaskQueue, &appTxMessage, 0);
+						break;
+					}
+					case MQTT_TOPIC_GET_STATUS:
+					{
+						MQTTStatus_t status;
+						status = MQTT_CheckConnectStatus( &xMqttCtx );
+						char sendStatus[ 64 ];
+						uint16_t len = (uint16_t)snprintf( sendStatus, sizeof( sendStatus ),
+																	"{\"status\": %d}", (int)status);
+						bool ret = MqttPublishFunction(xMqttCtx, sendStatus, len, mqtt_GATEAWAY_STATUS_RSP);
+						if(ret) isNeedPublishRsp = false;
 
 						break;
-					case MQTT_TOPIC_LED_BLUE:
-						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_SET);
-						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0,  GPIO_PIN_RESET);
-						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+					}
+					case MQTT_TOPIC_SETTINGS:
+					{
+
+						if( isNeedPublishRsp ){
+							char *pRed = strstr(queueRxMsg.payload, "\"LedRED\"");
+							char *pGreen = strstr(queueRxMsg.payload, "\"LedGREEN\"");
+							char *pBlue = strstr(queueRxMsg.payload, "\"LedBLUE\"");
+
+							if (pRed != NULL) {
+								if (strstr(pRed, "\"ON\"") != NULL) {
+									HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
+								} else if (strstr(pRed, "\"OFF\"") != NULL) {
+									HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+								}
+							}
+
+							if (pGreen != NULL) {
+								if (strstr(pGreen, "\"ON\"") != NULL) {
+									HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0,  GPIO_PIN_SET);
+								} else if (strstr(pGreen, "\"OFF\"") != NULL) {
+									HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0,  GPIO_PIN_RESET);
+								}
+							}
+
+							if (pBlue != NULL) {
+								if (strstr(pBlue, "\"ON\"") != NULL) {
+									HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_SET);
+								} else if (strstr(pBlue, "\"OFF\"") != NULL) {
+									HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_RESET);
+								}
+							}
+
+							char pcPayload[ 64 ];
+
+							int iLen = snprintf( pcPayload, sizeof( pcPayload ),
+												 "{\"SUCCESS\":}");
+							bool ret = MqttPublishFunction(xMqttCtx, pcPayload, iLen, mqtt_GATEAWAY_CAN_RSP);
+							if(ret) isNeedPublishRsp = false;
+
+						}
 						break;
-					case MQTT_TOPIC_LED_RED:
-						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
-						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0,  GPIO_PIN_RESET);
-						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_RESET);
-						break;
+					}
 					default:
 						break;
 				}
+
+
+
 			}
 
 
@@ -298,9 +335,29 @@ void vTCPInitializeTask( TaskAppQueues_s* pTaskQueues ){
     }
 }
 
+static bool MqttPublishFunction( MQTTContext_t xMqttCtx, char* pcPayload, size_t len, const char* topic)
+{
+	MQTTPublishInfo_t xPub = { 0 };
+	xPub.qos             = MQTTQoS0;
+	xPub.pTopicName      = topic;
+	xPub.topicNameLength = ( uint16_t ) strlen( topic );
+	xPub.pPayload        = pcPayload;
+	xPub.payloadLength   = ( size_t ) len;
+
+	if( MQTT_Publish( &xMqttCtx,
+					  &xPub,
+					  0,
+					  NULL ) == MQTTSuccess ){
+		printf( "Publish OK\r\n" );
+		return true;
+	}
+	return false;
+
+}
 static mqtt_topic_t GetTopicId(const char *topic,
                                uint16_t topicLength)
 {
+	isNeedPublishRsp = true;
     if ((topicLength == strlen(mqtt_GATEAWAY_COMMAND)) &&
         (memcmp(topic,
                 mqtt_GATEAWAY_COMMAND,
@@ -314,7 +371,7 @@ static mqtt_topic_t GetTopicId(const char *topic,
                 mqtt_GATEAWAY_STATUS,
                 topicLength) == 0))
     {
-        return MQTT_TOPIC_LED_BLUE;
+        return MQTT_TOPIC_GET_STATUS;
     }
 
     if ((topicLength == strlen(mqtt_GATEAWAY_CAN)) &&
@@ -322,7 +379,7 @@ static mqtt_topic_t GetTopicId(const char *topic,
                 mqtt_GATEAWAY_CAN,
                 topicLength) == 0))
     {
-        return MQTT_TOPIC_LED_RED;
+        return MQTT_TOPIC_SETTINGS;
     }
 
     return MQTT_TOPIC_UNKNOWN;

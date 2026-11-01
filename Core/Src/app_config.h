@@ -4,7 +4,7 @@
 #include "rtos.h"
 #include "mqtt_task.h"
 
-#define MAX_MQTT_MSG_LENGTH        64U
+#define MAX_MQTT_MSG_LENGTH       64u
 
 #define MQTT_TASK_QUEUE_LENGTH    3U
 #define CAN_TASK_QUEUE_LENGTH     3U
@@ -13,6 +13,8 @@ typedef enum
 {
     MQTT_SUBS_MSG_RCV = 0,
     MQTT_PUBL_MSG_SEND,
+    MQTT_GET_STATUS,
+    MQTT_SETTINGS,
     CAN_MSG_RECEIVED
 } AppMessageType;
 
@@ -28,8 +30,8 @@ typedef struct
 typedef struct
 {
     mqtt_topic_t topic;
-    char payload[MAX_MQTT_MSG_LENGTH];
     uint16_t payloadLength;
+    char payload[MAX_MQTT_MSG_LENGTH];
 } MqttMessage_s;
 
 

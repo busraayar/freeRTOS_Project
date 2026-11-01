@@ -5,6 +5,7 @@
  *      Author: busra.ayar
  */
 #include "rtos.h"
+#include <stdlib.h>
 #include "../../Core/Src/app_config.h"
 /*
  * CAN TASK CREATE
@@ -19,6 +20,7 @@ extern CAN_HandleTypeDef hcan1;
 uint8_t rxData[8];
 
 void CAN_Send(CanMessage_s* data);
+uint32_t parseCmdFromJson(char* data, uint8_t datalen, char* cmndKey);
 
 static void canTaskFunc( void * pvParameters )
 {
@@ -41,7 +43,8 @@ static void canTaskFunc( void * pvParameters )
 //						do something
 						CanMessage_s canMsg = {0};
 
-						canMsg.canId = 0x100;
+						canMsg.canId = parseCmdFromJson(mqttReceivedMsg->payload , mqttReceivedMsg->payloadLength, (char*)canMsg.data);
+
 						canMsg.dataLen = mqttReceivedMsg->payloadLength;
 
 						if(canMsg.dataLen > 8)
@@ -49,9 +52,9 @@ static void canTaskFunc( void * pvParameters )
 						    canMsg.dataLen = 8;
 						}
 
-						memcpy(canMsg.data,
-						       mqttReceivedMsg->payload,
-						       canMsg.dataLen);
+//						memcpy(canMsg.data,
+//						       mqttReceivedMsg->payload,
+//						       canMsg.dataLen);
 
 						CAN_Send(&canMsg);
 
@@ -106,9 +109,6 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan){
             &rxHeader,
             rxData) == HAL_OK)
     {
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7,  GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
 
 		canMsg.TypeId = CAN_MSG_RECEIVED;
 
@@ -143,6 +143,31 @@ void CAN_Send(CanMessage_s* data)
 	}
 
 	return;
+}
+
+uint32_t parseCmdFromJson(char* data, uint8_t datalen, char* cmndKey)
+{
+    if (data == NULL || datalen == 0) return 0;
+
+    uint32_t parsedCanId = 0;
+    char canIdStr[16] = {0};
+
+    char* canIdKey = strstr(data, RECEIVED_CAN_ID_FROM_MQTT);
+    cmndKey = strstr(data, "cmnd");
+
+    if (canIdKey != NULL) {
+    	canIdKey = strchr(canIdKey, '"');
+    	canIdKey = strchr(canIdKey + 1, '"');
+    	if (canIdKey != NULL) {
+    		canIdKey++;
+        	parsedCanId = strtol(canIdKey, NULL, 16);
+
+    	}
+
+    }
+
+    return parsedCanId;
+
 }
 
 void CanTaskCreate(  TaskAppQueues_s* pTaskQueues ){
